@@ -1,0 +1,8 @@
+<form novalidate>
+	<div class="form-group">
+		<label for="nome"><h3>Seu nome:</h3></label>
+		<input ng-model="usuario.nome" id="nome" type="text" class="form-control"/>
+		<h6 class="text-danger pull-left">{{ error }}</h6>
+	</div>
+	<button class="btn btn-success pull-right" ng-click="login()"><span class="glyphicon glyphicon-user"></span>Entrar</button>		
+</form>
