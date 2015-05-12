@@ -4,6 +4,12 @@ function signaling(server) {
 	
 	io.on('connection', function(socket) {
 	  
+	  socket.on('disconnect', function(data) {
+		  console.log(socket.username+' saiu.');
+		  delete users[socket.username];
+		  io.emit('lista', JSON.stringify(Object.keys(users)));
+	  });
+
 	  console.log('usuario conectou');
 	  socket.on('entrar', function(msg) {
 		  if (users[msg]) {
@@ -13,7 +19,8 @@ function signaling(server) {
 		  }
 	    console.log(msg+' entrou');		
 		users[msg] = {"socket": socket};	    
-	    socket.emit('entrar' , JSON.stringify({"nomeLogado":msg}));		  
+	    socket.emit('entrar' , JSON.stringify({"nomeLogado":msg}));	
+		socket.username = msg;	  
 	    io.emit('lista', JSON.stringify(Object.keys(users)));
 	  });
 	  

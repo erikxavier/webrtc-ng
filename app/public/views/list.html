@@ -1,1 +1,11 @@
-<h3>Logado como {{usuario.nome}}</h3></h3>
+<h6 class='text-success'>Logado como {{usuario.nome}}. <a href="#" class="link">Sair</a></h6><br/>
+<table class="table table-hover table-bordered table-condensed">
+	<tr>
+		<td class="text-center"><h3>Usuários conectados</h5></td>
+	</tr>
+	<tr ng-repeat="user in list">
+		<td ng-mouseover="hoverUser(user)" ng-mouseleave="hoverUser()" ng-class="{success: hoveredUser == user}">
+			<h5 class="pull-left">{{ user }}</h5> <button class="btn btn-info pull-right"><span class="glyphicon glyphicon-earphone"></span>Ligar</button>
+		</td>
+	</tr>
+</table>
