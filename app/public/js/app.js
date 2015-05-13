@@ -1,5 +1,5 @@
 /// <reference path="../../../typings/angularjs/angular.d.ts"/>
-var app = angular.module('webrtc', []);
+var app = angular.module('webrtc', ['ngAnimate']);
 app.controller('mainCtrl', function($scope) {
 	$scope.usuario = {};
 	var socket = io();
@@ -33,7 +33,14 @@ app.controller('mainCtrl', function($scope) {
 		$scope.$apply();
 
 	})
+	
+	
 	$scope.login = function() {
 		socket.emit('entrar', $scope.usuario.nome);		
 	};
+	
+	$scope.call = function(quem) {
+		$scope.quem = quem;
+		$scope.go('call.html');
+	}
 });
