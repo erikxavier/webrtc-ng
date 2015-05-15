@@ -25,3 +25,5 @@
 	-o-animation: fadeOutDown 1s;
 	animation: fadeOutDown 1s;
 }
+
+body {margin: 20px;}

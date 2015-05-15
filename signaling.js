@@ -13,8 +13,7 @@ function signaling(server) {
 	  console.log('usuario conectou');
 	  socket.on('entrar', function(msg) {
 		  if (users[msg]) {
-			  socket.emit('entrar',JSON.stringify({"error":"Usuario "+msg+" já existe!"}));
-			  socket.disconnect();			  
+			  socket.emit('entrar',JSON.stringify({"error":"Usuario "+msg+" já existe!"}));			  			  
 			  return;
 		  }
 	    console.log(msg+' entrou');		
