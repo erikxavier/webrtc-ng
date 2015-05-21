@@ -10,4 +10,4 @@ var server = http.createServer(app);
 
 var signaling = require('./signaling.js')(server);
 
-server.listen(8080);
+server.listen(80);
