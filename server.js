@@ -10,4 +10,4 @@ var server = http.createServer(app);
 
 var signaling = require('./signaling.js')(server);
 
-server.listen(8000);
+server.listen(process.env.PORT || 8000);
