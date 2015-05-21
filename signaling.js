@@ -2,12 +2,22 @@ function signaling(server) {
 	var users = {};	
 	var io = require('socket.io')(server);
 	
+
+	
 	io.on('connection', function(socket) {
 	  
-	  socket.on('disconnect', function(data) {
-		  console.log(socket.username+' saiu.');
-		  delete users[socket.username];
+  		function removeUser(user) {
+		  console.log(user+' saiu.');
+		  delete users[user];
 		  io.emit('lista', JSON.stringify(Object.keys(users)));
+		}
+		
+	  socket.on('disconnect', function(data) {
+		  removeUser(socket.username);		  
+	  });	 	
+	  
+	  socket.on('sair', function(data) {
+		 removeUser(data); 
 	  });
 
 	  console.log('usuario conectou');

@@ -1,3 +1,4 @@
+/* global io */
 'use strict';
 var services = angular.module('Main', []);
 
@@ -6,47 +7,49 @@ services.factory('CallService', ['$q', function($q) {
 }]);
 
 services.factory('SignalingService', ['$q', function($q) {
-	var Signaling = function Signaling(socket) {
-		var socket = socket;		
-		this.onDisconnect = function() {
-			return $q(function(resolve, reject) {
-				socket.on('disconnect', function() {
-					resolve();
-				});
-			});
-		};
-		
-		this.onEntrar = function() {
-			return $q(function(resolve, reject) {
-				socket.on('entrar', function(data) {
-					var msg = JSON.parse(data);
-					if (msg.error) {
-						reject(msg.error);						
-					} else {
-						resolve(msg);
-					}					
-				});
-			});
-		};
-		
-		this.entrar = function(nome) {
-			return $q(function(resolve, reject) {
-				if (socket && socket.connected) {
-					socket.emit('entrar', nome);					
-					resolve();
-				} else {
-					reject("Não foi possível conectar ao servidor");
-				}	
-			});
-		};						
-	};
-	
-	return Signaling;
-		
-}]);
+//	var socket = io();
+//	
+//	var service = {};
+//				
+//	service.onDisconnect = function() {
+//		return $q(function(resolve, reject) {
+//			socket.on('disconnect', function() {
+//				resolve();
+//			});
+//		});
+//	};
+//	
+//	service.onEntrar = function() {
+//		return $q(function(resolve, reject) {
+//			socket.on('entrar', function(data) {
+//				var msg = JSON.parse(data);
+//				if (msg.error) {
+//					reject(msg.error);						
+//				} else {
+//					resolve(msg);
+//				}					
+//			});
+//		});
+//	};
+//	
+//	service.entrar = function(nome) {
+//		return $q(function(resolve, reject) {
+//			if (socket && socket.connected) {
+//				socket.emit('entrar', nome);					
+//				resolve();
+//			} else {
+//				reject("Não foi possível conectar ao servidor");
+//			}	
+//		});
+//	};						
+//
+//	return service;
+//		
+//}]);
+
 //Tentativa com callbacks
 //services.factory('SignalingService', ['$q', function($q) {	
-//		var socket = socket;
+//		var socket = io();
 //		var setSocket = function(sock) {
 //			socket = sock;
 //		};
@@ -83,4 +86,4 @@ services.factory('SignalingService', ['$q', function($q) {
 //			onDisconnect: onDisconnect
 //		 };
 //		
-//}]);
+}]);
