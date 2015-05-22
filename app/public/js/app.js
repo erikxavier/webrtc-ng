@@ -1,7 +1,8 @@
 /// <reference path="../../../typings/angularjs/angular.d.ts"/>
 var app = angular.module('webrtc', ['ngAnimate']);
 app.controller('mainCtrl', ['$scope', function($scope) {
-	$scope.usuario = {};		
+	$scope.usuario = {};
+	$scope.peer = null;		
 	var viewPath = 'views/';
 	$scope.route =  viewPath+'login.html';
 	$scope.audio = new Audio();		
@@ -56,6 +57,7 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	$scope.atender = function() {
 		iniciaConversa();	
 		$scope.callMsg = "Conectando...";	
+		$scope.btnAtender = false;
 	};
 	
 	function setAudio(audio) {
@@ -64,48 +66,62 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 		$scope.audio.play();
 	}
 	
+	function setCallMsg(msg) {
+		$scope.callMsg = msg;
+		$scope.$apply();
+	}
+	
 	socket.on('chamada', function(json) {
 		var chamada = JSON.parse(json);						
 		if (chamada.error) {
 			alert("Não foi possivel realizar a operação. Erro: "+chamada.error);
 			return;
 		}
-		
+//			if (isInCall && !isCaller) {
+//				socket.emit("chamada",
+//				JSON.stringify({
+//						para:chamada.dados.de, 
+//						error: "Usuário já está em uma chamada!", 
+//						dados: {de:$scope.usuario.nome}
+//					})
+//				);
+//				return;
+//			}
 		if (chamada.dados.oferta) {
-			if (isInCall) {
-				socket.emit("chamada",JSON.stringify({error: "Usuário já está em uma chamada!"}));
-				return;
-			}
-			ofertaRecebida = chamada.dados.oferta;
-			peer = chamada.dados.de;
-			$scope.callMsg = "Recebendo chamada de "+peer;
-			$scope.recebendo = true;
-			isInCall = true;
-			$scope.btnAtender = true;			
-			$scope.go('call.html');	
-			$scope.$apply();
-			setAudio("audio/ring.mp3");																
+			if (!isInCall) {
+				ofertaRecebida = chamada.dados.oferta;
+				$scope.peer = chamada.dados.de;
+				$scope.recebendo = true;
+				setCallMsg("Recebendo chamada de "+$scope.peer);
+				$scope.go('call.html');	
+				$scope.$apply();
+				setAudio("audio/ring.mp3");	
+				isInCall = true;
+				$scope.btnAtender = true;
+			}															
 		} else if (chamada.dados.resposta) {
-			pc.setRemoteDescription(new window.RTCSessionDescription(chamada.dados.resposta),
-									function() {
-										$scope.callMsg = "Em chamada com "+peer;
-										},
-									function() {
-										console.log("Falha na conexão");
-										peer = null;
-										isInCall = false;
-										$scope.recebendod = false;
-										isCaller = false; 
-										$scope.go('list.html');
-										}
-									);
+			pc.setRemoteDescription(
+				new window.RTCSessionDescription(chamada.dados.resposta),
+				function() {
+					setCallMsg("Em chamada com "+$scope.peer);	
+													
+					},
+				function(error) {
+					console.log("Falha na conexão: "+error);
+					$scope.peer = null;
+					isInCall = false;
+					$scope.recebendod = false;
+					isCaller = false; 
+					$scope.go('list.html');
+					}
+				);
 		}
 	});
 	//Transforma binário em URL
 	window.URL = window.URL || window.webkitURL;
 	//getUserMedia => request dos recursos de audio/video do usuário
 	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-	// Cria a conexão WebRTC com outro peer
+	// Cria a conexão WebRTC com outro $scope.peer
 	window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
 	//Manipula os SDP local e remoto
     window.RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription;
@@ -116,13 +132,12 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	var ice = {"iceServers": [
 		{"url": "stun:stun.l.google.com:19302"}
 	]};
-	var pc = new window.RTCPeerConnection(ice);
+	var pc = null;
 	
 	var isCaller = false;
 	var isInCall = false;
 	var ofertaRecebida = null;
 	
-	var peer = null;
 	//var pc = null;
 	
 	$scope.audioSrc = null;
@@ -131,15 +146,22 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	
 	function getMediaSuccess(stream) {
 		//Cria o RTCPeerConnection
-		//pc = new window.RTCPeerConnection(ice);
+		pc = new window.RTCPeerConnection(ice);
 		
+		pc.onaddstream = onStreamAdded;
 		//Adiciona o mediaStream local ao RTCPeerCon
 		pc.addStream(stream);
 		
 		
 		//Callbacks do RTCPC
-		pc.onaddstream = onStreamAdded;
+
 		pc.onicecandidate = onIceCandidate;
+		
+		var offerConstraints = {
+			mandatory: {
+				OfferToReceiveAudio: true
+			}
+		};
 		
 		if (isCaller) {
 			//Chamar createOffer() irá executar o processo ICE			
@@ -147,8 +169,8 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	   			pc.setLocalDescription(new window.RTCSessionDescription(offerSDP),
 					//Sucesso ao setar localDescription - pode enviar a oferta(trickle ICE)
 					function() {
-						var oferta = { "de": $scope.usuario.nome ,"oferta": pc.localDescription};
-						socket.emit("chamada", JSON.stringify( {"para": peer, "dados":oferta} ));
+//						var oferta = { "de": $scope.usuario.nome ,"oferta": pc.localDescription};
+//						socket.emit("chamada", JSON.stringify( {"para": $scope.peer, "dados":oferta} ));
 						console.log("SDP Local configurado");
 					},
 					//Falha ao setar localDescription
@@ -158,7 +180,7 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 						},
 			function(err) {
 				console.log("Não foi possivel construir oferta: "+err);
-			}, constraints);
+			}, offerConstraints);
 		} else {
 			pc.setRemoteDescription(new window.RTCSessionDescription(ofertaRecebida),
 				//Sucesso ao setar SDP pra resposta
@@ -171,8 +193,8 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 							new window.RTCSessionDescription(respostaSDP),
 	   						//Sucesso ao setar localDescription - pode enviar a resposta(trickle ICE)
 							function() {
-								var resposta = {"de": $scope.usuario.nome , "resposta":pc.localDescription };
-								socket.emit("chamada", JSON.stringify({ "para": peer, "dados":resposta}));
+//								var resposta = {"de": $scope.usuario.nome , "resposta":pc.localDescription };
+//								socket.emit("chamada", JSON.stringify({ "para": $scope.peer, "dados":resposta}));
 								console.log("SDP Local configurado");
 							},
 							//Falha ao setar localDescription
@@ -198,10 +220,10 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 				
 				if (isCaller) {
 				var oferta = { "de": $scope.usuario.nome ,"oferta": pc.localDescription};
-				socket.emit("chamada", JSON.stringify( {"para": peer, "dados":oferta} ));
+				socket.emit("chamada", JSON.stringify( {"para": $scope.peer, "dados":oferta} ));
 				} else {
 					var resposta = {"de": $scope.usuario.nome , "resposta":pc.localDescription };
-					socket.emit("chamada", JSON.stringify({ "para": peer, "dados":resposta}));
+					socket.emit("chamada", JSON.stringify({ "para": $scope.peer, "dados":resposta}));
 				}
 			}
 		}
@@ -209,6 +231,8 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 		function onStreamAdded(evt) {
 			var url = URL.createObjectURL(evt.stream);			
 			setAudio(url);
+			console.log("stream added!");
+			setCallMsg("Em chamada com "+$scope.peer);
 		}
 		
 	//Falha
@@ -217,14 +241,14 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 		alert('Falha ao capturar audio: '+err);
 		isCaller = false;
 		isInCall = false;
-		peer = null;
+		$scope.peer = null;
 		return;
 	}		
 		
 	$scope.call = function(quem) {
-		peer = quem;
+		$scope.peer = quem;
 		isCaller = true;		
-		$scope.callMsg = "Ligando para "+peer;		
+		$scope.callMsg = "Ligando para "+$scope.peer;		
 		$scope.go('call.html');
 		setAudio("audio/call.mp3");		
 				
@@ -232,7 +256,7 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	};
 	
 	function iniciaConversa() {
-		navigator.getUserMedia(constraints, getMediaSuccess, getMediaError);
+		navigator.getUserMedia(constraints, getMediaSuccess, getMediaError);		
 	}
 	
 	

@@ -35,6 +35,7 @@ function signaling(server) {
 	  
 	  socket.on('chamada', function(msg) {
 		  var chamada = JSON.parse(msg);
+		  console.log(chamada);
 		  if (users[chamada.para]) {
 			  users[chamada.para].socket.emit('chamada', msg);
 			  console.log("Mensagem enviada de "+chamada.dados.de+" para "+chamada.para);			  
