@@ -1,7 +1,7 @@
 <div class="routeAnimate">
 	<h4 class="text-info" ng-bind="callMsg"></h4><br/>
 <!--	<audio id="audioCall" data-ng-src="audioSrc" autoplay></audio>-->
-	<button class="btn btn-danger btn-block btn-lg" ng-hide="btnAtender">
+	<button class="btn btn-danger btn-block btn-lg" ng-click="desligar()" ng-hide="btnAtender">
 		Desligar <span class="glyphicon glyphicon-phone-alt"></span>
 	</button>
 	<button class="btn btn-success btn-block btn-lg" ng-click="atender()" ng-show="btnAtender">

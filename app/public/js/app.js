@@ -60,6 +60,11 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 		$scope.btnAtender = false;
 	};
 	
+	$scope.desligar = function() {
+		if (pc.iceConnectionState !== 'closed')		
+			pc.close();							
+	};
+	
 	function setAudio(audio) {
 				
 		$scope.audio.src = audio;
@@ -93,11 +98,11 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 				$scope.peer = chamada.dados.de;
 				$scope.recebendo = true;
 				setCallMsg("Recebendo chamada de "+$scope.peer);
-				$scope.go('call.html');	
-				$scope.$apply();
+				$scope.go('call.html');					
 				setAudio("audio/ring.mp3");	
 				isInCall = true;
 				$scope.btnAtender = true;
+				$scope.$apply();
 			}															
 		} else if (chamada.dados.resposta) {
 			pc.setRemoteDescription(
@@ -137,6 +142,11 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	var isCaller = false;
 	var isInCall = false;
 	var ofertaRecebida = null;
+	var mediaStream = null;
+	navigator.getUserMedia(constraints, 
+		function(stream) {
+			mediaStream = stream;
+		}, getMediaError);
 	
 	//var pc = null;
 	
@@ -156,6 +166,8 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 		//Callbacks do RTCPC
 
 		pc.onicecandidate = onIceCandidate;
+		
+		pc.oniceconnectionstatechange = onConnectionChange;
 		
 		var offerConstraints = {
 			mandatory: {
@@ -211,6 +223,18 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 			});
 		}
 	};
+	
+	function onConnectionChange(evt) {
+		console.log(evt);
+		var connState = evt.target.iceConnectionState;
+		if (connState == 'disconnected')
+			evt.target.close();
+		else if (connState == 'closed') {
+				isInCall = false;
+				isCaller = false;				
+				$scope.go('list.html');	
+		}
+	}
 		
 		function onIceCandidate(evt) {
 			//Espera por todos os candidates serem encontrados e envia para nosso peer
@@ -238,17 +262,21 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	//Falha
 	function getMediaError(err) {
 		console.log('Falha ao capturar audio!');
-		alert('Falha ao capturar audio: '+err);
+		console.log(err);
 		isCaller = false;
 		isInCall = false;
 		$scope.peer = null;
+		$scope.$apply(function() {
+			$scope.go('mediaError.html');
+			}
+		);
 		return;
 	}		
 		
 	$scope.call = function(quem) {
 		$scope.peer = quem;
 		isCaller = true;		
-		$scope.callMsg = "Ligando para "+$scope.peer;		
+		$scope.callMsg = "Ligando para "+$scope.peer;				
 		$scope.go('call.html');
 		setAudio("audio/call.mp3");		
 				
@@ -256,7 +284,8 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	};
 	
 	function iniciaConversa() {
-		navigator.getUserMedia(constraints, getMediaSuccess, getMediaError);		
+		getMediaSuccess(mediaStream)
+		//navigator.getUserMedia(constraints, getMediaSuccess, getMediaError);		
 	}
 	
 	
