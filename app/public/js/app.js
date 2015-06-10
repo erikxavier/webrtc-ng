@@ -205,8 +205,8 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 							new window.RTCSessionDescription(respostaSDP),
 	   						//Sucesso ao setar localDescription - pode enviar a resposta(trickle ICE)
 							function() {
-//								var resposta = {"de": $scope.usuario.nome , "resposta":pc.localDescription };
-//								socket.emit("chamada", JSON.stringify({ "para": $scope.peer, "dados":resposta}));
+								// var resposta = {"de": $scope.usuario.nome , "resposta":pc.localDescription };
+								// socket.emit("chamada", JSON.stringify({ "para": $scope.peer, "dados":resposta}));
 								console.log("SDP Local configurado");
 							},
 							//Falha ao setar localDescription
@@ -240,14 +240,14 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 			//Espera por todos os candidates serem encontrados e envia para nosso peer
 			if (evt.target.iceGatheringState === "complete") {
 				console.log("Busca ICE completa, enviando SDP para peer remoto:");
-				console.log(pc.localDescription);
+				console.log(evt.target);
 				
 				if (isCaller) {
-				var oferta = { "de": $scope.usuario.nome ,"oferta": pc.localDescription};
-				socket.emit("chamada", JSON.stringify( {"para": $scope.peer, "dados":oferta} ));
+					var oferta = { "de": $scope.usuario.nome, "oferta": pc.localDescription };
+					socket.emit("chamada", JSON.stringify({ "para": $scope.peer, "dados": oferta }));
 				} else {
-					var resposta = {"de": $scope.usuario.nome , "resposta":pc.localDescription };
-					socket.emit("chamada", JSON.stringify({ "para": $scope.peer, "dados":resposta}));
+					var resposta = { "de": $scope.usuario.nome, "resposta": pc.localDescription };
+					socket.emit("chamada", JSON.stringify({ "para": $scope.peer, "dados": resposta }));
 				}
 			}
 		}
