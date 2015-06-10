@@ -92,6 +92,7 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 			isInCall = false;
 			isCaller = false;				
 			$scope.go('list.html');	
+			$scope.$apply();
 		}
 		//			if (isInCall && !isCaller) {
 		//				socket.emit("chamada",
