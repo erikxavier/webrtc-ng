@@ -62,7 +62,11 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	
 	$scope.desligar = function() {
 		if (pc.iceConnectionState !== 'closed')		
-			pc.close();							
+			pc.close();
+			socket.emit('chamada', JSON.stringify({para: $scope.peer, bye:true, dados: {de:$scope.usuario.nome}}));	
+			isInCall = false;
+			isCaller = false;				
+			$scope.go('list.html');							
 	};
 	
 	function setAudio(audio) {
@@ -76,49 +80,59 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 		$scope.$apply();
 	}
 	
-	socket.on('chamada', function(json) {
-		var chamada = JSON.parse(json);						
+	socket.on('chamada', function (json) {
+		var chamada = JSON.parse(json);
 		if (chamada.error) {
-			alert("Não foi possivel realizar a operação. Erro: "+chamada.error);
+			alert("Não foi possivel realizar a operação. Erro: " + chamada.error);
 			return;
 		}
-//			if (isInCall && !isCaller) {
-//				socket.emit("chamada",
-//				JSON.stringify({
-//						para:chamada.dados.de, 
-//						error: "Usuário já está em uma chamada!", 
-//						dados: {de:$scope.usuario.nome}
-//					})
-//				);
-//				return;
-//			}
+		if (chamada.bye) {
+			console.log("Chamada desligada pelo peer remoto");
+			pc.close();	
+			isInCall = false;
+			isCaller = false;				
+			$scope.go('list.html');	
+		}
+		//			if (isInCall && !isCaller) {
+		//				socket.emit("chamada",
+		//				JSON.stringify({
+		//						para:chamada.dados.de, 
+		//						error: "Usuário já está em uma chamada!", 
+		//						dados: {de:$scope.usuario.nome}
+		//					})
+		//				);
+		//				return;
+		//			}
 		if (chamada.dados.oferta) {
 			if (!isInCall) {
 				ofertaRecebida = chamada.dados.oferta;
 				$scope.peer = chamada.dados.de;
 				$scope.recebendo = true;
-				setCallMsg("Recebendo chamada de "+$scope.peer);
-				$scope.go('call.html');					
-				setAudio("audio/ring.mp3");	
+				setCallMsg("Recebendo chamada de " + $scope.peer);
+				$scope.go('call.html');
+				setAudio("audio/ring.mp3");
 				isInCall = true;
 				$scope.btnAtender = true;
 				$scope.$apply();
-			}															
+			}
 		} else if (chamada.dados.resposta) {
 			pc.setRemoteDescription(
 				new window.RTCSessionDescription(chamada.dados.resposta),
-				function() {
-					setCallMsg("Em chamada com "+$scope.peer);	
-													
-					},
-				function(error) {
-					console.log("Falha na conexão: "+error);
-					$scope.peer = null;
-					isInCall = false;
-					$scope.recebendod = false;
-					isCaller = false; 
-					$scope.go('list.html');
+				function () {
+					setCallMsg("Em chamada com " + $scope.peer);
+					isInCall = true;
+
+				},
+				function (error) {
+					console.log("Falha na conexão: " + error);
+					if (pc.iceConnectionState !== 'connected') {
+						$scope.peer = null;
+						isInCall = false;
+						$scope.recebendod = false;
+						isCaller = false;
+						$scope.go('list.html');
 					}
+				}
 				);
 		}
 	});
@@ -227,17 +241,16 @@ app.controller('mainCtrl', ['$scope', function($scope) {
 	function onConnectionChange(evt) {
 		console.log(evt);
 		var connState = evt.target.iceConnectionState;
-		if (connState == 'disconnected')
-			evt.target.close();
-		else if (connState == 'closed') {
-				isInCall = false;
-				isCaller = false;				
-				$scope.go('list.html');	
+		if (connState == 'closed') {
+			isInCall = false;
+			isCaller = false;				
+			$scope.go('list.html');	
 		}
 	}
 		
 		function onIceCandidate(evt) {
 			//Espera por todos os candidates serem encontrados e envia para nosso peer
+			console.log("onIceCandidate: "+evt.target.iceGatheringState);
 			if (evt.target.iceGatheringState === "complete") {
 				console.log("Busca ICE completa, enviando SDP para peer remoto:");
 				console.log(evt.target);
