@@ -1,11 +1,18 @@
 function signaling(server) {
 	var users = {};	
 	var io = require('socket.io')(server);
+    var shortid = require('shortid');
 	
 
 	
 	io.on('connection', function(socket) {
-	  
+	    var newId = shortid.generate();
+        console.log(newId+' entrou');		
+		users[newId] = {"socket": socket};	    
+	    socket.emit('entrar' , JSON.stringify({"nomeLogado":newId}));	
+		socket.username = newId;	  
+	    io.emit('lista', JSON.stringify(Object.keys(users)));
+        
   		function removeUser(user) {
 		  console.log(user+' saiu.');
 		  delete users[user];
@@ -21,21 +28,20 @@ function signaling(server) {
 	  });
 
 	  console.log('usuario conectou');
-	  socket.on('entrar', function(msg) {
-		  if (users[msg]) {
-			  socket.emit('entrar',JSON.stringify({"error":"Usuario "+msg+" já existe!"}));			  			  
-			  return;
-		  }
-	    console.log(msg+' entrou');		
-		users[msg] = {"socket": socket};	    
-	    socket.emit('entrar' , JSON.stringify({"nomeLogado":msg}));	
-		socket.username = msg;	  
-	    io.emit('lista', JSON.stringify(Object.keys(users)));
-	  });
+	//   socket.on('entrar', function(msg) {
+	// 	  if (users[msg]) {
+	// 		  socket.emit('entrar',JSON.stringify({"error":"Usuario "+msg+" já existe!"}));			  			  
+	// 		  return;
+	// 	  }
+	//     console.log(msg+' entrou');		
+	// 	users[msg] = {"socket": socket};	    
+	//     socket.emit('entrar' , JSON.stringify({"nomeLogado":msg}));	
+	// 	socket.username = msg;	  
+	//     io.emit('lista', JSON.stringify(Object.keys(users)));
+	//   });
 	  
 	  socket.on('chamada', function(msg) {
-		  var chamada = JSON.parse(msg);
-		  console.log(chamada);
+		  var chamada = JSON.parse(msg);		  
 		  if (users[chamada.para]) {
 			  users[chamada.para].socket.emit('chamada', msg);
 			  console.log("Mensagem enviada de "+chamada.dados.de+" para "+chamada.para);			  
