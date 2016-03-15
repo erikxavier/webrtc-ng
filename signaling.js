@@ -13,7 +13,7 @@ function signaling(server) {
 		}
 		
 	  socket.on('disconnect', function(data) {
-		  removeUser(socket.username);		  
+		  removeUser(socket.username);
 	  });	 	
 	  
 	  socket.on('sair', function(data) {

@@ -4,11 +4,26 @@
 var express = require('express');
 var app = express();
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
 
-app.use(express.static('app/public'));
+const certificados = {
+    key: fs.readFileSync('privatekey.key'),
+    cert: fs.readFileSync('certificate.crt')
+};
+
+app.use(express.static('src'));
 var server = http.createServer(app);
+var httpsServer = https.createServer(certificados, app);
 
 
-var signaling = require('./signaling.js')(server);
+var signaling = require('./signaling.js')(httpsServer);
+var port = process.env.PORT || 80;
+var httpsPort = process.env.HTTPS_PORT || 443;
+server.listen(port, function () {
+    console.log("Servidor web rodando na porta "+port);
+});
 
-server.listen(process.env.PORT || 8000);
+httpsServer.listen(httpsPort, function() {
+    console.log("Servidor HTTPS rodando na porta "+httpsPort);
+});
