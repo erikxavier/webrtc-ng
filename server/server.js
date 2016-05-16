@@ -14,6 +14,8 @@ app.use(express.static('app'));
 var server = http.createServer(app);
 var httpsServer = https.createServer(certificados, app);
 
+app.use('/api', require('./api-routes'));
+
 
 var signaling = require('./signaling.js')(httpsServer);
 var port = process.env.PORT || 80;

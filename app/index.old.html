@@ -1,0 +1,22 @@
+<html ng-app="WebRTC-NG">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WebRTC-NG</title> 
+    <script src="js/app.js"></script>
+</head>
+<body ng-controller="CtrlSuporte as vm">
+    <div id="seuCodigo">{{ vm.meuCodigo }}</div>
+    <div id="lista">
+        <ul>
+            <li ng-repeat="item in vm.lista">{{ item }}</li>
+        </ul>
+    </div>
+    <button id="solicitar"  ng-click="vm.solicitarSuporte()">Solicitar suporte</button>
+    <input type="text" id="codigo" ng-model="vm.codigoRemoto" /><br>    
+    <video ng-src="{{ vm.remoteVideoSrc }}" controls height="360" width="480" id="localVideo" autoplay></video>
+    <a href="https://www.webrtc-experiment.com/getScreenId/">getScreenId</a>  
+    <button ng-click="vm.close()">Fechar conexão</button>       
+</body>
+</html>
