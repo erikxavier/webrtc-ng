@@ -22,7 +22,7 @@
 
 </head>
 
-<body>
+<body ng-controller="IndexController as vm">
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -40,11 +40,11 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav pull-right">
-                    <li>
+                    <li ng-if="vm.tipo == 'usuario'">
                         <a ui-sref="solicitar-suporte">Solicitar assistência</a>
                     </li>
-                    <li>
-                        <a href="#">Histórico de chamados</a>
+                    <li ng-if="vm.tipo == 'tecnico'">
+                        <a ui-sref="historico">Histórico de chamados</a>
                     </li>
                     <li>
                         <a href="#">Ajuda</a>
@@ -57,7 +57,7 @@
     </nav>
 
     <!-- Page Content -->
-    <div class="container">
+    <div class="container main-container">
         <div class="row">
             <div ui-view></div>
         </div>

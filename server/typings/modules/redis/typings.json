@@ -1,0 +1,12 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/heycalmdown/typed-redis/68dc5edbf2bcf282f8fc105790b5014e318cf246/typings.json",
+    "raw": "registry:npm/redis#0.12.1+20160502170935",
+    "main": "index.d.ts",
+    "version": "0.12.1",
+    "global": false,
+    "name": "redis",
+    "type": "typings"
+  }
+}

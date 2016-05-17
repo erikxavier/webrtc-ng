@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "redis": "registry:npm/redis#0.12.1+20160502170935"
+  }
+}
