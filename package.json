@@ -5,6 +5,6 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "watchify app/js/main.js -o app/js/app.js -dv | node server/server.js"
+    "start": "watchify app/js/main.js -o app/js/app.js -dv | nodemon server"
   }
 }
