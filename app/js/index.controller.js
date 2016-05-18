@@ -1,9 +1,9 @@
 
 module.exports = IndexController;
 
-IndexController.$inject = ['$state'];
+IndexController.$inject = ['$state', 'SocketService'];
 
-function IndexController($state) {
+function IndexController($state, SocketService) {
     var vm = this;
             
     activate();

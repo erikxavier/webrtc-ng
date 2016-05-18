@@ -4,6 +4,8 @@ var angular = require('angular');
 
 angular.module('WebRTC-NG', [require('angular-ui-router')])
     .controller('IndexController', require('./index.controller'))
+    .factory('EndPointService', require('./shared/endpoint.service'))
+    .factory('SocketService', require('./shared/socket.service'))
     .config(RouteConfig);
     
     
@@ -22,8 +24,8 @@ angular.module('WebRTC-NG', [require('angular-ui-router')])
         })
          .state('solicitar-suporte', {
              url: '/solicitar-suporte',
-             templateUrl: 'js/suporte/view-suporte-cliente.html',
-             controller: require('./suporte/suporte.controller'),
+             templateUrl: 'js/suporte/view-solicitar-suporte.html',
+             controller: require('./suporte/solicitar-suporte.controller'),
              controllerAs: 'vm',
              onEnter: function() {
                  console.log("oi");
