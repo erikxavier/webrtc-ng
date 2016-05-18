@@ -10,11 +10,11 @@
         <div id="login-tecnico" ng-if="loginTecnico">
  
 	        <label for="inputUsuario" class="sr-only">Usuário</label>
-	        <input type="text" id="inputUsuario" class="form-control" placeholder="Usuário" required autofocus>
+	        <input ng-model="vm.usuario" type="text" id="inputUsuario" class="form-control" placeholder="Usuário" required autofocus>
 	        <label for="inputSenha" class="sr-only">Senha</label>
-	        <input type="password" id="inputSenha" class="form-control" placeholder="Senha" required> 
-          <button type="submit" class="btn btn-primary pull-right">Entrar</a>
-          
+	        <input ng-model="vm.senha" type="password" id="inputSenha" class="form-control" placeholder="Senha" required> 
+          <p ng-if="vm.loginMsg" class="text-danger clearfix">{{vm.loginMsg}}</p>
+          <button type="submit" class="btn btn-primary pull-right" ng-click="vm.login()">Entrar</a>          
         </div>
         <form class="form-signin">  	                      
 
