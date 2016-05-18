@@ -4,6 +4,7 @@ var app = express();
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
+var bodyParser = require('body-parser');
 
 const certificados = {
     key: fs.readFileSync(__dirname +'/privatekey.key'),
@@ -11,6 +12,10 @@ const certificados = {
 };
 
 app.use(express.static('app'));
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
 var server = http.createServer(app);
 var httpsServer = https.createServer(certificados, app);
 
