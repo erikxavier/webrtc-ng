@@ -1,12 +1,10 @@
 <h2>Lista de usuários esperando atendimento</h2>
 
-<ul>
-	<li ng-repeat='item in vm.lista'>
-		Nome: {{item.nome}} <br>
-		Descrição: {{item.descricao}} <br>
-		E-mail: {{item.email}} <br>
-		Tipo: {{item.tipo}}	<br>
-		<a class="btn btn-primary btn-sm" ng-click="vm.atenderChamado(item.socketId)">Responder</a>
-		<hr>	
-	</li>
+/* teste de implementacao e commit */
+<ul ng-repeat='item in vm.lista'>
+	<li>Nome: {{item.nome}} </li>
+	<li>Descrição: {{item.descricao}}</li>
+	<li>E-mail: {{item.email}}</li>
+	<li>Tipo: {{item.tipo}}</li>
+	<a class="btn btn-primary btn-sm" ng-click="vm.atenderChamado(item.socketId)">Responder</a>
 </ul>
