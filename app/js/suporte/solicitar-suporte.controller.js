@@ -10,7 +10,7 @@ function SolicitarSuporteController($http, SocketService) {
     }
     
     vm.solicitarSuporte = function() {
-        var socketId = SocketService.getSocketId();
+        var socketId = SocketService.localCode;
         if (socketId) {
             var solicitacao = {
                 socketId: socketId,

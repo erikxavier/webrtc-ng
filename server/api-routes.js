@@ -7,7 +7,7 @@ var tecnicosDisponiveis = [];
 
 router.post('/solicitar-suporte', function (req, res, next) {
     var usuario = req.body;    
-    //console.log(usuario);
+    console.log(usuario);
     //client.sadd('lista-espera', JSON.stringify(usuario));
     filaEspera.push(JSON.stringify(usuario));
 
