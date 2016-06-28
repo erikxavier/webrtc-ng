@@ -37,6 +37,18 @@ angular.module('WebRTC-NG', [require('angular-ui-router')])
              controller: require('./historico/historico.controller'),
              controllerAs: 'vm'
          })
+         .state('lista-espera', {
+             url: '/lista-espera',
+             templateUrl: 'js/tecnico/view-lista-espera.html',
+             controller: require('./tecnico/lista-espera.controller'),
+             controllerAs: 'vm'
+         })
+         .state('chamada', {
+             url:'/chamada/:socketId',
+             templateUrl: 'js/chamada/view-chamada.html',
+             controller: require('./chamada/chamada.controller'),
+             controllerAs: 'vm'
+         })
          .state('login', {
              url:'/login',
              templateUrl: 'js/login/view-login.html',
