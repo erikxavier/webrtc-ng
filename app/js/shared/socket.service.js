@@ -8,45 +8,32 @@ SocketService.$inject = [];
 
 function SocketService() {    
     
-    var observer = new EventEmmiter();
-    var socketId;
+    var service = new EventEmmiter();
     var socket = socketio();
-    var conStatus = false;
+    
+    service.isConnected = false;
+    var socket = socketio();
         
     socket.on('connect', function() {
-        conStatus = true;
-    })
-    
-     socket.on('disconnect', function() {
-        conStatus = false;
-    })
-    
-    socket.on('entrar', function(data) {
-        socketId = JSON.parse(data).nomeLogado;
+        service.isConnected = true;
     });
     
-    var service = {
-        start: start,
-        isConnected: isConnected,
-        getSocketId: getSocketId
-    };
+     socket.on('disconnect', function() {
+        service.isConnected = false;
+    });
+    
+    socket.on('entrar', function(data) {
+        service.localCode = JSON.parse(data).nomeLogado;
+        console.log(service.localCode);
+    });
+
+    socket.on('chamada', function(data) {
+        service.emit('chamada', data);
+    })
+
+    service.call = function(callData) {
+        socket.emit('chamada', callData);
+    }
         
     return service;
-
-    ////////////////
-    function start() {
-        socket = socketio();
-    }
-    
-    function isConnected() {        
-        return conStatus;        
-    }
-    
-    function getSocketId() {
-        if (conStatus && socketId) {
-            return socketId
-        } else {
-            return false;
-        }
-    }
 }
