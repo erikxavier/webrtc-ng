@@ -6,6 +6,7 @@ angular.module('WebRTC-NG', [require('angular-ui-router')])
     .controller('IndexController', require('./index.controller'))
     .factory('EndPointService', require('./shared/endpoint.service'))
     .factory('SocketService', require('./shared/socket.service'))
+    .factory('PeerConnectionService', require('./shared/peerconnection.service'))
     .config(RouteConfig);
     
     
