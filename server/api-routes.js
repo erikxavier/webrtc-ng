@@ -14,7 +14,7 @@ router.post('/solicitar-suporte', function (req, res, next) {
     if (tecnicosDisponiveis.length) {
         res.send(`Foram encontrados ${tecnicosDisponiveis.length} técnicos disponíveis.`);
     } else {
-        res.sendo('Nenhum técnico disponível');
+        res.send('Nenhum técnico disponível');
     }
                       
     // client.smembers('disponiveis', (err, rply) => {
