@@ -8,10 +8,12 @@ MediaStreamService.$inject = ['$window', '$q'];
 
 function MediaStreamService($window, $q) {
     var getScreenId = $window.getScreenId;
+    var requestedStreams = [];
 
     var service = {
         getScreenStream: getScreenStream,
-        getAudioStream: getAudioStream
+        getAudioStream: getAudioStream,
+        flushStreams
     }
 
     return service;
@@ -27,6 +29,7 @@ function MediaStreamService($window, $q) {
                     if (error) {
                         defered.reject(error);
                     } else {
+                        requestedStreams.push(stream);
                         defered.resolve(stream)
                     }
                 });
@@ -45,6 +48,7 @@ function MediaStreamService($window, $q) {
             if (error) {
                 defered.reject(error);
             } else {
+                requestedStreams.push(stream);
                 if (joinStream) {
                     defered.resolve(joinStreams(joinStream, stream));
                 } else {
@@ -62,7 +66,13 @@ function MediaStreamService($window, $q) {
         return stream1.addTrack(stream2.getTracks()[0]);
     }    
 
-    
+    function flushStreams() {
+        while(requestedStreams.length) {
+            requestedStreams
+              .pop()
+              .getTracks().forEach(stream => stream.stop());
+        }
+    }    
 
     
 }

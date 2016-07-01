@@ -21,19 +21,25 @@ function ChamadaController($stateParams, SocketService, PeerConnectionService, M
 		if ($stateParams.callData.action == 'answer') {		//Tecnico responde à um chamado
 			SocketService.setRemoteCode($stateParams.callData.socketId); //Atribui o socketId do usuário que requisitou o chamado
 			MediaStreamService.getAudioStream()                          //Pede autorização para compartilhar audio do microfone
-				.then(PeerConnectionService.addStream, console.log)		 //Atribui o stream de audio recebido ao PeerConnection
-				.then(PeerConnectionService.createOffer, console.log)    //Cria o SDP de oferta
+				.then(PeerConnectionService.addStream, handleError)		 //Atribui o stream de audio recebido ao PeerConnection
+				.then(PeerConnectionService.createOffer, handleError)    //Cria o SDP de oferta
 				.then(SocketService.sendCallData);                       //Envia o SDP de oferta criado
 		} else if ($stateParams.callData.action == 'ask') { //Usuário solicitando chamado
 			MediaStreamService.getScreenStream()                         //Pede autorização e escolha da tela a ser compartilhada
-				.then(PeerConnectionService.addStream, console.log)      //Atribui o stream de video recebido ao PeerConnection
-				.then(MediaStreamService.getAudioStream, console.log)    //Pede autorização para compartilhar audio do microfone
-				.then(PeerConnectionService.addStream, console.log);	 //Atribui o stream de audio recebido ao PeerConnection
+				.then(PeerConnectionService.addStream, handleError)      //Atribui o stream de video recebido ao PeerConnection
+				.then(MediaStreamService.getAudioStream, handleError)    //Pede autorização para compartilhar audio do microfone
+				.then(PeerConnectionService.addStream, handleError);	 //Atribui o stream de audio recebido ao PeerConnection
 		}
 	}
 	
 	//Função para atribuir uma stream à um elemento video
 	function setVideoSrc(stream) {
 		document.getElementById('video1').src = stream;
+	}
+
+	function handleError(error) {
+		console.log(error);
+		vm.errorMessage = error.name;
+		MediaStreamService.flushStreams();		
 	}
 }
