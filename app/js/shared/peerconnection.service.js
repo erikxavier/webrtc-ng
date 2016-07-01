@@ -1,57 +1,90 @@
 module.exports = PeerConnectionService;
+
 var PeerConnection = require('rtcpeerconnection');
-var EventEmmiter = require('events');
+var events = require('events');
 
-PeerConnectionService.$inject = ['SocketService'];
+PeerConnectionService.$inject = ['$q', 'SocketService'];
 
-function PeerConnectionService(SocketService) {
-    var constraints = {audio:false, video:true};
+function PeerConnectionService($q, SocketService) {
     var ice = {"iceServers": [
         {"url": "stun:stun.l.google.com:19302"}
     ]};
 
-    var service = new EventEmmiter();
+    var service = new events.EventEmitter(); //Instancia um emissor de eventos
+    var peerConnection;
 
-    service.PeerConnection = new PeerConnection();
+    //Fecha a conexão se houver alguma, instancia um novo PeerConnection e atribui os emissores do serviço aos listeners do PeerConnection
+    service.openConnection = function() {
+        if (peerConnection) {
+            peerConnection.close();
+        }
+        peerConnection = new PeerConnection();
 
-    service.PeerConnection.on('ice', function(candidate) {
-        service.emit('chamada', candidate);   
-    });
+        peerConnection.on('ice', function(candidate) {
+            service.emit('chamada', candidate);   
+        });
 
-    service.PeerConnection.on('addStream', function (event) {        
-        service.emit('streamAdded', URL.createObjectURL(event.stream));        
-    });    
+        peerConnection.on('addStream', function (event) {        
+            service.emit('streamAdded', URL.createObjectURL(event.stream));        
+        });    
 
-    service.PeerConnection.on('endOfCandidates', function() {
-        service.emit('endOfCandidates');
-    })
+        peerConnection.on('endOfCandidates', function() {
+            service.emit('endOfCandidates');
+        });        
+    }
 
+    //Adiciona um MediaStream ao PeerConnection
+    service.addStream = function(stream) {
+        return $q(function(resolve, reject) {
+            peerConnection.addStream(stream);
+            resolve();
+        });
+    };
+
+    //Cria uma oferta SDP
+    service.createOffer = function() {
+        var defered = $q.defer();
+        var constraints = {
+
+                //offerToReceiveAudio: true,
+                offerToReceiveVideo: true
+
+        }
+        peerConnection.offer(constraints, function(error, offer) {
+            if (error) {
+                defered.reject(error);
+            } else {
+                defered.resolve(offer);
+            }
+        });
+
+        return defered.promise;
+    };
+
+
+    //Resolve pacotes SDP, de oferta, de resposta ou ICE
     service.handleCallData = function(data) {
         var chamada = JSON.parse(data);
         if (chamada.dados.msg.type == "offer") {
-            SocketService.remoteCode = chamada.dados.de;
-            pc.handleOffer(chamada.dados.msg, function(err) {
-                if (err) console.log(err)
+            SocketService.setRemoteCode(chamada.dados.de);
+            peerConnection.handleOffer(chamada.dados.msg, function(err) {
+                if (err) service.emit('handleCallError', error)
                 else {
-                    pc.answer(function (err, answer) {
+                    peerConnection.answer(function (err, answer) {
                         if (err) console.log(err)
                         else {
-                            service.emit('chamada', 
-                                JSON.stringify(
-                                    {para: SocketService.remoteCode, 
-                                    dados: {de: SocketService.localCode, msg: answer}
-                                }));                            
+                            service.emit('chamada', answer);                            
                         }
                     })
                 }
             }) 
             } else if (chamada.dados.msg.type == "answer") {
-                pc.handleAnswer(chamada.dados.msg);
+                peerConnection.handleAnswer(chamada.dados.msg);
             } else {        
-                pc.processIce(chamada.dados.msg);
+                peerConnection.processIce(chamada.dados.msg);
             }        
         }
     
-
+    
     return service;
 }

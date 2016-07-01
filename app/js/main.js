@@ -7,6 +7,7 @@ angular.module('WebRTC-NG', [require('angular-ui-router')])
     .factory('EndPointService', require('./shared/endpoint.service'))
     .factory('SocketService', require('./shared/socket.service'))
     .factory('PeerConnectionService', require('./shared/peerconnection.service'))
+    .factory('MediaStreamService', require('./shared/mediastream.service'))
     .config(RouteConfig);
     
     
@@ -45,7 +46,8 @@ angular.module('WebRTC-NG', [require('angular-ui-router')])
              controllerAs: 'vm'
          })
          .state('chamada', {
-             url:'/chamada/:socketId',
+             url:'/chamada',
+             params: {callData: null},
              templateUrl: 'js/chamada/view-chamada.html',
              controller: require('./chamada/chamada.controller'),
              controllerAs: 'vm'

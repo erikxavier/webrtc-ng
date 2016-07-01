@@ -1,8 +1,8 @@
 module.exports = SolicitarSuporteController;
 
-SolicitarSuporteController.$inject = ['$http', 'SocketService'];
+SolicitarSuporteController.$inject = ['$http', '$state', 'SocketService'];
 
-function SolicitarSuporteController($http, SocketService) {
+function SolicitarSuporteController($http, $state, SocketService) {
     var vm = this;
     
     vm.isConnected = function() {
@@ -21,7 +21,9 @@ function SolicitarSuporteController($http, SocketService) {
             }
             $http.post('/api/solicitar-suporte', solicitacao)
                 .then(function(response) {
-                    console.log(response.data);
+                    $state.go('chamada', {
+                        callData: {action:'ask'}
+                    });
                 })
         }
     }

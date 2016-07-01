@@ -1,15 +1,10 @@
 module.exports = ChamadaController;
 
-var getScreenMedia = require('getscreenmedia')
-var getUserMedia = require('getusermedia');
-
 ChamadaController.$inject = 
-  ['$stateParams', '$window' ,'SocketService', 'PeerConnectionService'];
+  ['$stateParams', 'SocketService', 'PeerConnectionService', 'MediaStreamService'];
 
-function ChamadaController($stateParams, $window, SocketService, PeerConnectionService) {
+function ChamadaController($stateParams, SocketService, PeerConnectionService, MediaStreamService) {
 	var vm = this;
-	var getScreenId = $window.getScreenId;
-	var screenConst;
 		
 	activate();
 	
@@ -17,38 +12,28 @@ function ChamadaController($stateParams, $window, SocketService, PeerConnectionS
 	/////implementação
 	
 	function activate() {
-		//Inicialização		
-		var constraints = {audio:true, video:false};
-		vm.socketId = $stateParams.socketId;
-		var mediaStream;
-
-		//Pegar o ID da tela
-		getScreenId(function(error, sourceId, screen_constraints) {
-			if (!error) {
-				screenConst = screen_constraints;				
-				//screenConst.audio = true;
-				//screenConst.mandatory = {offerToReceiveAudio: true};
-				console.log('screen constraints:', screen_constraints);
-				//Pegar o stream da tela
-				getUserMedia(screenConst, function(error, stream) {
-					if (!error) {
-						mediaStream = stream;
-						//Pegar o stream de audio
-						getUserMedia(constraints, function(error, stream) {
-							if (!error) {
-								//Adicionar a track de audio ao stream da tela
-								mediaStream.addTrack(stream.getTracks()[0]);
-								//Colocar o stream combinado no elemento video1
-								document.getElementById('video1').src = URL.createObjectURL(mediaStream);
-							} else {
-								console.log(error);
-							}
-						});
-					}
-				});
-			} else {
-				console.log(error);
-			}
-		});
-	}		
+		//Inicialização	
+		PeerConnectionService.openConnection();	 //Instancia um novo PeerConnection
+		PeerConnectionService.on('chamada', SocketService.sendCallData); //Envia dados para o servidor(socket) quando criados pelo PC (Ice, sdp etc)
+		PeerConnectionService.on('streamAdded', setVideoSrc); //Coloca um stream remoto recebido no elemento video
+		SocketService.on('chamada', PeerConnectionService.handleCallData); //Resolve os pacotes SDP e ICE recebidos pelo socket
+							
+		if ($stateParams.callData.action == 'answer') {		//Tecnico responde à um chamado
+			SocketService.setRemoteCode($stateParams.callData.socketId); //Atribui o socketId do usuário que requisitou o chamado
+			MediaStreamService.getAudioStream()                          //Pede autorização para compartilhar audio do microfone
+				.then(PeerConnectionService.addStream, console.log)		 //Atribui o stream de audio recebido ao PeerConnection
+				.then(PeerConnectionService.createOffer, console.log)    //Cria o SDP de oferta
+				.then(SocketService.sendCallData);                       //Envia o SDP de oferta criado
+		} else if ($stateParams.callData.action == 'ask') { //Usuário solicitando chamado
+			MediaStreamService.getScreenStream()                         //Pede autorização e escolha da tela a ser compartilhada
+				.then(PeerConnectionService.addStream, console.log)      //Atribui o stream de video recebido ao PeerConnection
+				.then(MediaStreamService.getAudioStream, console.log)    //Pede autorização para compartilhar audio do microfone
+				.then(PeerConnectionService.addStream, console.log);	 //Atribui o stream de audio recebido ao PeerConnection
+		}
+	}
+	
+	//Função para atribuir uma stream à um elemento video
+	function setVideoSrc(stream) {
+		document.getElementById('video1').src = stream;
+	}
 }
