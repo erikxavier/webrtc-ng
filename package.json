@@ -5,7 +5,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "watchify app/js/main.js -o app/js/app.js -dv | nodemon server"
+    "start": "node ./node_modules/watchify/bin/cmd.js app/js/main.js -o app/js/app.js -dv | node ./node_modules/nodemon/bin/nodemon.js server"
   },
   "devDependencies": {
     "browserify": "^13.0.1",
@@ -20,10 +20,12 @@
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
     "jshint": "^2.9.1",
+    "nodemon": "^1.9.2",
     "run-sequence": "^1.1.5",
     "streamify": "^0.2.5",
     "uglifyify": "^3.0.2",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
   }
 }
