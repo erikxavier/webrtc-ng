@@ -24,8 +24,16 @@ function PeerConnectionService($q, SocketService) {
             service.emit('chamada', candidate);   
         });
 
-        peerConnection.on('addStream', function (event) {        
-            service.emit('streamAdded', URL.createObjectURL(event.stream));        
+        peerConnection.on('addStream', function (event) {
+            event.stream.getTracks().forEach(function(track) {
+                if (track.kind === 'audio') {
+                    service.emit('audioStreamAdded', URL.createObjectURL(event.stream));
+                } else if (track.kind === 'video') {
+                    service.emit('videoStreamAdded', URL.createObjectURL(event.stream));
+                }
+            });            
+            //console.log(event.stream.getTracks());        
+            //service.emit('streamAdded', URL.createObjectURL(event.stream));        
         });    
 
         peerConnection.on('endOfCandidates', function() {
@@ -46,7 +54,7 @@ function PeerConnectionService($q, SocketService) {
         var defered = $q.defer();
         var constraints = {
 
-                //offerToReceiveAudio: true,
+                offerToReceiveAudio: true,
                 offerToReceiveVideo: true
 
         }
@@ -64,6 +72,9 @@ function PeerConnectionService($q, SocketService) {
 
     //Resolve pacotes SDP, de oferta, de resposta ou ICE
     service.handleCallData = function(data) {
+        var constraints = {
+                offerToReceiveAudio: true
+        }
         var chamada = JSON.parse(data);
         if (chamada.dados.msg.type == "offer") {
             SocketService.setRemoteCode(chamada.dados.de);
