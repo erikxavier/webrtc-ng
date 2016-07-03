@@ -14,10 +14,9 @@ function SolicitarSuporteController($http, $state, SocketService) {
         if (socketId) {
             var solicitacao = {
                 socketId: socketId,
-                nome: vm.nome,
-                email: vm.email,
+                nome: vm.usuario,
+                senha: vm.senha,
                 descricao: vm.descricao,
-                tipo: vm.tipo
             }
             $http.post('/api/solicitar-suporte', solicitacao)
                 .then(function(response) {

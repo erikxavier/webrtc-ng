@@ -3,8 +3,6 @@ location.ho
 LoginController.$inject = ['$scope', '$state', '$http', 'SocketService'];
 function LoginController($scope, $state, $http, SocketService) {
     var vm = this;
-    
-    
     vm.entrarUsuario = function() {
         $scope.$parent.vm.tipo = 'usuario';   
         $state.go('solicitar-suporte');          

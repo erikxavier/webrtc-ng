@@ -1,10 +1,10 @@
 body {
-  padding-top: 70px;
+  padding-top: 50px;
 /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
   padding-bottom: 40px;
-  background-color: #eee;
+  background-color:#fff;
 }
 
 .main-container {
-  margin-top: 50px;
+  margin-top: 20px;
 }

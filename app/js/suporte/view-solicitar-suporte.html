@@ -1,49 +1,29 @@
-<div class="col-lg-6 col-lg-offset-3">
-
 <form class="form-horizontal" style="margin-top:20px;">
   <fieldset>
-    <legend class='text-center'><h1>Dados do solicitante</h1></legend>
+    <legend class='text-center'><h1>Quem é Você?</h1></legend>
     
     <div class="form-group">
-      <label for="inputNome" class="col-lg-2 control-label">Nome:</label>
+      <label for="inputUsuario" class="col-lg-2 control-label">Usuário:</label>
       <div class="col-lg-10">
-        <input ng-model="vm.nome" type="text" class="form-control" id="inputNome" placeholder="Nome">
+        <input ng-model="vm.usuario" type="text" class="form-control" id="inputUsuario" placeholder="cg000000">
       </div>
     </div>
         
     <div class="form-group">
-      <label for="inputEmail" class="col-lg-2 control-label">Email:</label>
+      <label for="inputSenha" class="col-lg-2 control-label">Senha:</label>
       <div class="col-lg-10">
-        <input ng-model="vm.email" type="text" class="form-control" id="inputEmail" placeholder="Email">
+        <input ng-model="vm.senha" type="password" class="form-control" id="inputSenha" placeholder="Senha">
       </div>
     </div>
 
     <div class="form-group">
-      <label for="textArea" class="col-lg-2 control-label">Descrição:</label>
+      <label for="textArea" class="col-lg-2 control-label">Problema:</label>
       <div class="col-lg-10">
         <textarea ng-model="vm.descricao" class="form-control" rows="3" id="textArea"></textarea>
-        <span class="help-block">Descreva em poucas palavras o problema que está enfrentando, para podermos melhor o atender.</span>
+        <span class="help-block">Descreva em poucas palavras o problema que está enfrentando, para podermos melhor ajudar.</span>
       </div>
     </div>
     
-    <div class="form-group">
-      <label class="col-lg-2 control-label">Assistência:</label>
-      <div class="col-lg-10">
-        <div class="radio">
-          <label>
-            <input ng-model="vm.tipo" type="radio" name="optionsRadios" id="optionsRadios1" value="screen" checked="">
-            Compartilhamento de tela
-          </label>
-        </div>
-        <div class="radio">
-          <label>
-            <input ng-model="vm.tipo" type="radio" name="optionsRadios" id="optionsRadios2" value="screen-audio">
-            Compartilhamento de tela e chamada de audio
-          </label>
-        </div>
-      </div>
-    </div>
-   
     <div class="form-group text-center">
       <div class="col-lg-10 col-lg-offset-2">
     <a ng-click="vm.solicitarSuporte()" class="btn btn-primary btn-lg">Solicitar Assistência</a>
@@ -51,5 +31,3 @@
     </div>
   </fieldset>
 </form>
-
-</div>

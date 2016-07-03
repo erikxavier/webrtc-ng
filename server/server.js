@@ -25,7 +25,7 @@ app.use('/api', require('./api-routes'));
 
 
 var signaling = require('./signaling.js')(httpsServer);
-var port = process.env.PORT || 80;
+var port = process.env.PORT || 81;
 var httpsPort = process.env.HTTPS_PORT || 443;
 server.listen(port, function () {
     console.log("Servidor web rodando na porta "+port);
