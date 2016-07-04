@@ -13,7 +13,8 @@ function MediaStreamService($window, $q) {
     var service = {
         getScreenStream: getScreenStream,
         getAudioStream: getAudioStream,
-        flushStreams
+        flushStreams,
+        getEmptyMediaStream
     }
 
     return service;
@@ -39,6 +40,18 @@ function MediaStreamService($window, $q) {
         return defered.promise;
 	}	
 
+    function getEmptyMediaStream() {
+        var constraints = {audio: false, video:false};
+        var defered = $q.defer();
+        getUserMedia(constraints, function(error, stream) {
+            if (error) {
+                defered.reject(error);
+            } else {                
+                defered.resolve(stream);
+            }
+        });
+        return defered.promise;
+    }
     //Solicita que o usuário autorize o compartilhamento do audio do microfone
 	function getAudioStream(joinStream) {
 		var constraints = {audio: true, video:false};

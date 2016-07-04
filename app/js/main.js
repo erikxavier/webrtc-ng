@@ -52,6 +52,13 @@ angular.module('WebRTC-NG', [require('angular-ui-router')])
              controller: require('./chamada/chamada.controller'),
              controllerAs: 'vm'
          })
+         .state('chamada-tecnico', {
+             url:'/tecnico/chamada',
+             params: {callData: null},
+             templateUrl: 'js/tecnico/view-chamada-tecnico.html',
+             controller: require('./tecnico/chamada-tecnico.controller'),
+             controllerAs: 'vm'
+         })         
          .state('login', {
              url:'/login',
              templateUrl: 'js/login/view-login.html',

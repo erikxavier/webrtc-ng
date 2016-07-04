@@ -1,38 +1,29 @@
-<!--<h2>Chamada em andamento com {{vm.socketId}}</h2>
+<h2>Chamada em andamento com {{vm.socketId}}</h2>
 <h6 class="text-danger">{{vm.errorMessage}}</h6>
 <video id='video1' width="" height="" controls autoplay>  
 </video>
-<audio id='audio1' controls autoplay>  
-</audio>-->
 
-<legend class='text-center'><h1>Chamando CTI</h1></legend>
-<div class="text-center">
-	<a ng-disabled="!vm.pcIsConnected" ng-click="vm.startAudioSharing()" class="btn btn-primary">Ativar o Som</a>
-	<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Ativar Camera</a>
-	<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Enviar Tela</a>
-	
 	<div class="list-group" style="margin-top:20px;">
 		<a ng-repeat="msg in vm.chatMessages" class="list-group-item">
 		<p class="list-group-item-text text-left">
-			<span ng-if="msg.received" class="label label-info">Técnico:</span> 
+			<span ng-if="msg.received" class="label label-info">Usuário:</span> 
 			<span ng-if="!msg.received" class="label label-warning">Você:</span>
 			{{msg.message}}
 		</p>
 		</a>		
 	</div>
-	
+    
 	<form class="form-horizontal" style="margin-top:20px;">
 	<div class="form-group">
 		<div class="col-lg-10">
 		<textarea ng-model="vm.textToSend" class="form-control" rows="3" id="textArea"></textarea>
 		<span class="help-block">Mande sua mensagem.</span>
 		</div>
-	</div>
-	
+	</div>	
+
 	<div class="form-group text-center">
 		<div class="col-lg-10 col-lg-offset-2">
 			<a ng-disabled="!vm.chatOpen" ng-click="vm.sendMessage()" class="btn btn-primary">Enviar</a>
 		</div>
 	</div>
 	</form>
-</div>

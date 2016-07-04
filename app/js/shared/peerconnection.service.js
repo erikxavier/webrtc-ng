@@ -12,6 +12,7 @@ function PeerConnectionService($q, SocketService) {
 
     var service = new events.EventEmitter(); //Instancia um emissor de eventos
     var peerConnection;
+    var sendChannel;
 
     //Fecha a conexão se houver alguma, instancia um novo PeerConnection e atribui os emissores do serviço aos listeners do PeerConnection
     service.openConnection = function() {
@@ -24,7 +25,20 @@ function PeerConnectionService($q, SocketService) {
             service.emit('chamada', candidate);   
         });
 
+        peerConnection.on('iceConnectionStateChange', function(e) {
+            service.emit('connectionStateChange', peerConnection.iceConnectionState);
+        });
+
+        peerConnection.on('addChannel', function(channel) {
+            console.log('canal remoto adicionado'); //REMOVER
+            channel.onmessage = function(event) {
+                console.log('msg DC recebida');
+                service.emit('messageReceived', event.data);
+            }
+        })
+
         peerConnection.on('addStream', function (event) {
+            console.log(event);
             event.stream.getTracks().forEach(function(track) {
                 if (track.kind === 'audio') {
                     service.emit('audioStreamAdded', URL.createObjectURL(event.stream));
@@ -48,6 +62,22 @@ function PeerConnectionService($q, SocketService) {
             resolve();
         });
     };
+
+    //Cria canal de dados
+    service.createDataChannel = function() {
+        console.log('data channel criado'); // REMOVER
+        sendChannel = peerConnection.createDataChannel('sendDataChannel', {reliable: false});
+        sendChannel.onopen = function() {
+            service.emit('dataChannelStateChange', sendChannel.readyState)
+        }
+    }
+
+    service.sendMessage = function(data) {
+        console.log('mensagem recebida data channel'); //REMOVER
+        if (sendChannel) {
+            sendChannel.send(data);
+        }
+    }
 
     //Cria uma oferta SDP
     service.createOffer = function() {

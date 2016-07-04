@@ -34,7 +34,7 @@ function ListaEsperaController($http, $state) {
 	}
 	
 	function atenderChamado(socketId) {
-		$state.go('chamada', {
+		$state.go('chamada-tecnico', {
 			callData: {
 				socketId: socketId,
 				action: 'answer'
