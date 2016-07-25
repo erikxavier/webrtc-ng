@@ -5,7 +5,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "node ./node_modules/watchify/bin/cmd.js app/js/main.js -o app/js/app.js -dv | node ./node_modules/nodemon/bin/nodemon.js server"
+    "start": "nodemon server ",
+    "build": "webpack -d --watch"
   },
   "devDependencies": {
     "browserify": "^13.0.1",
@@ -26,6 +27,7 @@
     "uglifyify": "^3.0.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "webpack": "^1.13.1"
   }
 }

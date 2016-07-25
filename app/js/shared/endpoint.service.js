@@ -4,7 +4,7 @@ EndPointService.$inject = ['$location'];
 
 function EndPointService($location) {
     var service = {
-        getLogin
+        getLogin: getLogin
     };
     
     return service;

@@ -6,6 +6,7 @@ var https = require('https');
 var fs = require('fs');
 var bodyParser = require('body-parser');
 var compression = require('compression');
+var path = require('path');
 
 const certificados = {
     key: fs.readFileSync(__dirname +'/privatekey.key'),
@@ -13,7 +14,9 @@ const certificados = {
 };
 
 app.use(compression());
-app.use(express.static('app'));
+app.use(express.static(
+        path.resolve('app/')
+    ));
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded

@@ -13,8 +13,8 @@ function MediaStreamService($window, $q) {
     var service = {
         getScreenStream: getScreenStream,
         getAudioStream: getAudioStream,
-        flushStreams,
-        getEmptyMediaStream
+        flushStreams: flushStreams,
+        getEmptyMediaStream: getEmptyMediaStream
     }
 
     return service;
@@ -83,7 +83,7 @@ function MediaStreamService($window, $q) {
         while(requestedStreams.length) {
             requestedStreams
               .pop()
-              .getTracks().forEach(stream => stream.stop());
+              .getTracks().forEach(function(stream) {stream.stop()});
         }
     }    
 

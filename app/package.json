@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack -d"
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +18,8 @@
     "jquery": "^2.2.3",
     "rtcpeerconnection": "^5.0.1",
     "socket.io-client": "^1.4.5"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.1"
   }
 }

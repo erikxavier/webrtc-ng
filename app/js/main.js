@@ -1,4 +1,4 @@
-require('../lib/getScreenId');
+// require('../lib/getScreenId.js');
 //require('bootstrap');
 var angular = require('angular');
 

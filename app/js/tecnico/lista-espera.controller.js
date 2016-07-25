@@ -5,7 +5,7 @@ ListaEsperaController.$inject = ['$http', '$state'];
 function ListaEsperaController($http, $state) {
 	var vm = this;
 	vm.lista = [
-		{nome: 'não tem ninguém aqui'}
+		{nome: 'Lista vazia'}
 	]
 	
 	vm.atenderChamado = atenderChamado;
