@@ -24,10 +24,11 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 var server = http.createServer(app);
 var httpsServer = https.createServer(certificados, app);
 
-app.use('/api', require('./api-routes'));
-
-
 var signaling = require('./signaling.js')(httpsServer);
+app.use('/api', require('./api-routes')(signaling));
+
+
+
 var port = process.env.PORT || 81;
 var httpsPort = process.env.HTTPS_PORT || 443;
 server.listen(port, function () {

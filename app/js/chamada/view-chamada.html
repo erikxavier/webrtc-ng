@@ -6,7 +6,10 @@
 </audio>-->
 
 <legend class='text-center'><h1>Chamando CTI</h1></legend>
-<div class="text-center">
+<div class="text-center" ng-if="!vm.pcIsConnected">
+	<h4>Aguardando um técnico.</h4>
+</div>
+<div class="text-center" ng-if="vm.pcIsConnected">
 	<a ng-disabled="!vm.pcIsConnected" ng-click="vm.startAudioSharing()" class="btn btn-primary">Ativar o Som</a>
 	<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Ativar Camera</a>
 	<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Enviar Tela</a>

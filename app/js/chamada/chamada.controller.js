@@ -6,6 +6,8 @@ ChamadaController.$inject =
 function ChamadaController($scope, $stateParams, SocketService, PeerConnectionService, MediaStreamService) {
 	var vm = this;
 
+	vm.emAtendimento = false;
+
 	vm.pcIsConnected = false;
 	vm.chatOpen = false;
 	vm.chatMessages = [];
@@ -90,7 +92,7 @@ function ChamadaController($scope, $stateParams, SocketService, PeerConnectionSe
 
 	function peerConnectionStateChange(state) {
 		console.log(state);
-		vm.pcIsConnected = state === 'connected' || state === 'completed';
+		vm.pcIsConnected = state === 'connected' || state === 'completed';	
 		$scope.$apply();
 	}
 }

@@ -1,3 +1,0 @@
- {
- "start": "node ./node_modules/watchify/bin/cmd.js app/js/main.js -o app/js/app.js -dv | node ./node_modules/nodemon/bin/nodemon.js server"
- }

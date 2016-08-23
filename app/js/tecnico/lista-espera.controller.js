@@ -1,25 +1,32 @@
 module.exports = ListaEsperaController;
 
-ListaEsperaController.$inject = ['$http', '$state'];
+ListaEsperaController.$inject = ['$http', '$state', 'SocketService'];
 
-function ListaEsperaController($http, $state) {
+function ListaEsperaController($http, $state, SocketService) {
 	var vm = this;
-	vm.lista = [
-		{nome: 'Lista vazia'}
-	]
+	vm.lista = []
 	
 	vm.atenderChamado = atenderChamado;
 		
 	activate();
 	
 	
+
+	SocketService.on('lista-espera', function() {
+		getLista();
+	});
+
 	function activate() {
+		getLista();
+	}
+
+	function getLista() {
 		$http.get('/api/lista-espera')
-			.then(resolveLista);
-			
+			.then(resolveLista);	
 	}
 	
 	function resolveLista(response) {
+		if (!Array.isArray(response.data)) return [];
 		var data = response.data.map(function(value) {
 			return JSON.parse(value);
 		});

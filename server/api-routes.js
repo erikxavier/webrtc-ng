@@ -1,4 +1,6 @@
 var router = require('express').Router();
+var db = require('./db.config').getDb();
+var socket;
 // var redis = require('redis');
 // var client = redis.createClient(); 
 var filaEspera = [];
@@ -10,7 +12,7 @@ router.post('/solicitar-suporte', function (req, res, next) {
     console.log(usuario);
     //client.sadd('lista-espera', JSON.stringify(usuario));
     filaEspera.push(JSON.stringify(usuario));
-
+    socket.emit('lista-espera');
     if (tecnicosDisponiveis.length) {
         res.send(`Foram encontrados ${tecnicosDisponiveis.length} técnicos disponíveis.`);
     } else {
@@ -26,6 +28,14 @@ router.post('/solicitar-suporte', function (req, res, next) {
     // })        
 });
 
+
+router.get('/users', function(req, res) {
+    if (db.get('users').value()) {
+        res.json(db.get('users').value())
+    } else {
+        res.send({error: 'no results'});
+    }
+})
 router.get('/lista-espera', function(req, res, next) {
     // client.smembers('lista-espera', (err, reply) => {
     //     if (reply.length > 0) {
@@ -58,7 +68,11 @@ router.post('/login-tecnico', function (req, res, next) {
     res.send(response);
 })
 
-module.exports = router;
+function getRouter(io) {
+    socket = io;
+    return router
+}
+module.exports = getRouter;
 
 
 function validaUsuario(usuario) {

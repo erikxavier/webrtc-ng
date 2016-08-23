@@ -1,10 +1,8 @@
-function signaling(server) {
-	var users = {};	
+function signaling(server) {	
 	var io = require('socket.io')(server);
-    var shortid = require('shortid');
-	
+    var shortid = require('shortid');	
+	var users = {};	
 
-	
 	io.on('connection', function(socket) {
 	    var newId = shortid.generate();
         console.log(newId+' entrou');		

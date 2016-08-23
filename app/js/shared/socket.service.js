@@ -39,6 +39,11 @@ function SocketService() {
         service.remoteCode = socketId;
     }
 
+    //Avisa alteração na lista de espera
+    socket.on('lista-espera', function(data) {
+        service.emit('lista-espera');
+    })
+
     //Monta um pacote padronizado com informações da chamada e envia para o servidor
     service.sendCallData = function(callData) {
         var msg = {
