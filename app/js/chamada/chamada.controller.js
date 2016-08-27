@@ -15,16 +15,6 @@ function ChamadaController($scope, $stateParams, SocketService, PeerConnectionSe
 	activate();
 	
 	/////implementação
-
-	vm.startVideoSharing = function() {
-		MediaStreamService.getScreenStream()                         	//Pede autorização e escolha da tela a ser compartilhada
-			.then(PeerConnectionService.addStream, handleError)      	//Atribui o stream de video recebido ao PeerConnection		
-	}
-
-	vm.startAudioSharing = function() {
-		MediaStreamService.getAudioStream()                         	//Pede autorização e escolha da tela a ser compartilhada
-			.then(PeerConnectionService.addStream, handleError)      	//Atribui o stream de video recebido ao PeerConnection		
-	}	
 	
 	vm.sendMessage = function() {
 		vm.chatMessages.push({
@@ -38,13 +28,15 @@ function ChamadaController($scope, $stateParams, SocketService, PeerConnectionSe
 		//Inicialização					
 		PeerConnectionService.openConnection();	 							//Instancia um novo PeerConnection
 		PeerConnectionService.createDataChannel();
+		PeerConnectionService.on('callError', handleError)
 		PeerConnectionService.on('connectionStateChange', peerConnectionStateChange);
 		PeerConnectionService.on('chamada', SocketService.sendCallData); 	//Envia dados para o servidor(socket) quando criados pelo PC (Ice, sdp etc)
 		PeerConnectionService.on('videoStreamAdded', setVideoSrc); 			//Coloca um stream remoto recebido no elemento video
 		PeerConnectionService.on('audioStreamAdded', setAudioSrc); 			//Coloca um stream de audio remoto recebido em um objeto audio
 		SocketService.on('chamada', PeerConnectionService.handleCallData); 	//Resolve os pacotes SDP e ICE recebidos pelo socket
 		PeerConnectionService.on('messageReceived', messageReceived);
-		PeerConnectionService.on('dataChannelStateChange', dataChannelStatusChange);					
+		PeerConnectionService.on('dataChannelStateChange', dataChannelStatusChange);
+		console.log('activate finished');					
 		// if ($stateParams.callData.action == 'answer') {						//Tecnico responde à um chamado
 		// 	SocketService.setRemoteCode($stateParams.callData.socketId); 	//Atribui o socketId do usuário que requisitou o chamado
 		// 	MediaStreamService.getAudioStream()                          	//Pede autorização para compartilhar audio do microfone
@@ -57,6 +49,38 @@ function ChamadaController($scope, $stateParams, SocketService, PeerConnectionSe
 			// 	.then(MediaStreamService.getAudioStream, handleError)    	//Pede autorização para compartilhar audio do microfone
 			// 	.then(PeerConnectionService.addStream, handleError);	 	//Atribui o stream de audio recebido ao PeerConnection
 		// }
+	}
+
+	vm.upgradeCallRemoveAudio = function() {
+		// PeerConnectionService.removeStream(MediaStreamService.getRequestedAudioStream())
+		// 	.then(MediaStreamService.removeRequestedStream);
+		console.log(MediaStreamService.getRequestedAudioStream());
+		vm.hasAudio = false;
+	}
+
+	vm.upgradeCallRemoveVideo = function() {
+		PeerConnectionService.removeStream(MediaStreamService.getRequestedVideoStream())
+			.then(MediaStreamService.removeRequestedStream)
+	}
+
+	vm.upgradeCallRemoveScreen = function() {
+		PeerConnectionService.removeStream(MediaStreamService.getRequestedScreenStream())
+			.then(MediaStreamService.removeRequestedStream)
+	}		
+
+	vm.upgradeCallAddAudio = function() {
+		MediaStreamService.getAudioStream()
+			.then(PeerConnectionService.addStream, handleError)
+			.then(PeerConnectionService.createOffer, handleError)
+			.then(SocketService.sendCallData);
+		vm.hasAudio = true;
+	}
+
+	vm.upgradeCallAddScreen = function() {
+		MediaStreamService.getScreenStream()                         	//Pede autorização e escolha da tela a ser compartilhada
+			.then(PeerConnectionService.addStream, handleError)      	//Atribui o stream de video recebido ao PeerConnection
+			.then(PeerConnectionService.createOffer, handleError)
+			.then(SocketService.sendCallData);
 	}
 	
 	//Função para atribuir uma stream à um elemento video
@@ -87,7 +111,7 @@ function ChamadaController($scope, $stateParams, SocketService, PeerConnectionSe
 	function handleError(error) {
 		console.log(error);
 		vm.errorMessage = error.name;
-		MediaStreamService.flushStreams();		
+		//MediaStreamService.flushStreams();		
 	}
 
 	function peerConnectionStateChange(state) {

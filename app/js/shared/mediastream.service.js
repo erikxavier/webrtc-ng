@@ -8,16 +8,39 @@ MediaStreamService.$inject = ['$window', '$q'];
 
 function MediaStreamService($window, $q) {
     var getScreenId = $window.getScreenId;
+
+    var audioStream;
     var requestedStreams = [];
 
     var service = {
         getScreenStream: getScreenStream,
         getAudioStream: getAudioStream,
         flushStreams: flushStreams,
-        getEmptyMediaStream: getEmptyMediaStream
+        getEmptyMediaStream: getEmptyMediaStream,
+        getRequestedAudioStream: getRequestedAudioStream,
+        removeRequestedStream: removeRequestedStream
     }
 
     return service;
+
+    function getRequestedAudioStream() {
+        return audioStream;
+    }
+
+    function getRequestedVideoStream() {
+       // return getRequestedStream("video");
+    }
+
+    function getRequestedScreenStream() {
+       // return getRequestedStream("screen");
+    }
+
+    function removeRequestedStream(stream) {
+        if (requestedStreams.indexOf(stream)) {
+            requestedStreams.splice(requestedStreams.indexOf(stream));
+            stream.getTracks().forEach(function(track) {track.stop()});
+        }
+    }
 
     //Solicita que o usuário autorize e seleciona a tela para ser compartilhada
 	function getScreenStream() {
@@ -30,7 +53,7 @@ function MediaStreamService($window, $q) {
                     if (error) {
                         defered.reject(error);
                     } else {
-                        requestedStreams.push(stream);
+                        console.log(stream);
                         defered.resolve(stream)
                     }
                 });
@@ -61,7 +84,7 @@ function MediaStreamService($window, $q) {
             if (error) {
                 defered.reject(error);
             } else {
-                requestedStreams.push(stream);
+                audioStream = stream;
                 if (joinStream) {
                     defered.resolve(joinStreams(joinStream, stream));
                 } else {

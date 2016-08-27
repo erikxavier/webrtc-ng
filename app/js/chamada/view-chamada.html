@@ -10,9 +10,12 @@
 	<h4>Aguardando um técnico.</h4>
 </div>
 <div class="text-center" ng-if="vm.pcIsConnected">
-	<a ng-disabled="!vm.pcIsConnected" ng-click="vm.startAudioSharing()" class="btn btn-primary">Ativar o Som</a>
+	<a ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Iniciar chamada por audio</a>
+	<!--<a ng-if="vm.hasAudio" ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveAudio()" class="btn btn-primary">Parar microfone</a>-->
 	<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Ativar Camera</a>
-	<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Enviar Tela</a>
+	<!--<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Parar Camera</a>-->
+	<a ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallAddScreen()" class="btn btn-primary">Enviar Tela</a>
+	<!--<a ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveScreen()" class="btn btn-primary">Parar Tela</a>-->
 	
 	<div class="list-group" style="margin-top:20px;">
 		<a ng-repeat="msg in vm.chatMessages" class="list-group-item">

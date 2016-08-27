@@ -13,19 +13,24 @@ function PeerConnectionService($q, SocketService) {
     var service = new events.EventEmitter(); //Instancia um emissor de eventos
     var peerConnection;
     var sendChannel;
+    var haveLocalOffer = false;
+    var candidateBuffer = [];
 
     //Fecha a conexão se houver alguma, instancia um novo PeerConnection e atribui os emissores do serviço aos listeners do PeerConnection
     service.openConnection = function() {
         if (peerConnection) {
             peerConnection.close();
         }
-        peerConnection = new PeerConnection();
+        peerConnection = new PeerConnection(ice);
 
         peerConnection.on('ice', function(candidate) {
+            console.log('ice candidate gerado');
+            console.log('ice state: ', peerConnection.iceConnectionState);
             service.emit('chamada', candidate);   
         });
 
         peerConnection.on('iceConnectionStateChange', function(e) {
+            console.log('ice state changed: ', peerConnection.iceConnectionState);
             service.emit('connectionStateChange', peerConnection.iceConnectionState);
         });
 
@@ -40,6 +45,7 @@ function PeerConnectionService($q, SocketService) {
         peerConnection.on('addStream', function (event) {
             console.log(event);
             event.stream.getTracks().forEach(function(track) {
+                console.log('track received:', track);
                 if (track.kind === 'audio') {
                     service.emit('audioStreamAdded', URL.createObjectURL(event.stream));
                 } else if (track.kind === 'video') {
@@ -79,6 +85,13 @@ function PeerConnectionService($q, SocketService) {
         }
     }
 
+    service.removeStream = function(stream) {
+        var defered = $q.defer();
+        peerConnection.removeStream(stream);
+        defered.resolve(stream);
+        return defered.promise;
+    }
+
     //Cria uma oferta SDP
     service.createOffer = function() {
         var defered = $q.defer();
@@ -99,30 +112,47 @@ function PeerConnectionService($q, SocketService) {
         return defered.promise;
     };
 
+    function processCandidateBuffer() {
+        while (candidateBuffer.length > 0) {
+            peerConnection.processIce(candidateBuffer.pop());
+        }
+    }
+
 
     //Resolve pacotes SDP, de oferta, de resposta ou ICE
     service.handleCallData = function(data) {
         var constraints = {
-                offerToReceiveAudio: true
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true
         }
         var chamada = JSON.parse(data);
-        if (chamada.dados.msg.type == "offer") {
+        if (chamada.dados.msg.type && chamada.dados.msg.type == "offer") {
+            console.log('oferta recebida');
             SocketService.setRemoteCode(chamada.dados.de);
             peerConnection.handleOffer(chamada.dados.msg, function(err) {
-                if (err) service.emit('handleCallError', error)
+                if (err) service.emit('callError', error)
                 else {
+                    console.log('oferta processada');
+                    haveLocalOffer = true;
+                    processCandidateBuffer();
                     peerConnection.answer(function (err, answer) {
                         if (err) console.log(err)
                         else {
+                            console.log('resposta criada e enviada');
                             service.emit('chamada', answer);                            
                         }
                     })
                 }
-            }) 
-            } else if (chamada.dados.msg.type == "answer") {
+            }); 
+        } else if (chamada.dados.msg.type && chamada.dados.msg.type == "answer") {
+                console.log('resposta recebida');
                 peerConnection.handleAnswer(chamada.dados.msg);
-            } else {        
-                peerConnection.processIce(chamada.dados.msg);
+            } else if (chamada.dados.msg.candidate) {
+                if (haveLocalOffer) {     
+                    peerConnection.processIce(chamada.dados.msg);
+                } else {
+                    candidateBuffer.push(chamada.dados.msg);
+                }
             }        
         }
     
