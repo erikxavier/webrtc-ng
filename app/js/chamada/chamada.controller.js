@@ -27,60 +27,42 @@ function ChamadaController($scope, $stateParams, SocketService, PeerConnectionSe
 	function activate() {
 		//Inicialização					
 		PeerConnectionService.openConnection();	 							//Instancia um novo PeerConnection
-		PeerConnectionService.createDataChannel();
-		PeerConnectionService.on('callError', handleError)
-		PeerConnectionService.on('connectionStateChange', peerConnectionStateChange);
+		PeerConnectionService.createDataChannel();							//Cria DataChannel no PeerConnection
+		PeerConnectionService.on('callError', handleError)					//Adiciona um callback de erro genérico, para qualquer erro do PeerConnectionService
+		PeerConnectionService.on('connectionStateChange', peerConnectionStateChange);  //Mudança de estado da conexão do PeerConnection
 		PeerConnectionService.on('chamada', SocketService.sendCallData); 	//Envia dados para o servidor(socket) quando criados pelo PC (Ice, sdp etc)
 		PeerConnectionService.on('videoStreamAdded', setVideoSrc); 			//Coloca um stream remoto recebido no elemento video
 		PeerConnectionService.on('audioStreamAdded', setAudioSrc); 			//Coloca um stream de audio remoto recebido em um objeto audio
 		SocketService.on('chamada', PeerConnectionService.handleCallData); 	//Resolve os pacotes SDP e ICE recebidos pelo socket
-		PeerConnectionService.on('messageReceived', messageReceived);
-		PeerConnectionService.on('dataChannelStateChange', dataChannelStatusChange);
-		console.log('activate finished');					
-		// if ($stateParams.callData.action == 'answer') {						//Tecnico responde à um chamado
-		// 	SocketService.setRemoteCode($stateParams.callData.socketId); 	//Atribui o socketId do usuário que requisitou o chamado
-		// 	MediaStreamService.getAudioStream()                          	//Pede autorização para compartilhar audio do microfone
-		// 		.then(PeerConnectionService.addStream, handleError)		 	//Atribui o stream de audio recebido ao PeerConnection
-		// 		.then(PeerConnectionService.createOffer, handleError)    	//Cria o SDP de oferta
-		// 		.then(SocketService.sendCallData);                       	//Envia o SDP de oferta criado
-		// } else if ($stateParams.callData.action == 'ask') { 				//Usuário solicitando chamado
-			// MediaStreamService.getScreenStream()                         	//Pede autorização e escolha da tela a ser compartilhada
-			// 	.then(PeerConnectionService.addStream, handleError)      	//Atribui o stream de video recebido ao PeerConnection
-			// 	.then(MediaStreamService.getAudioStream, handleError)    	//Pede autorização para compartilhar audio do microfone
-			// 	.then(PeerConnectionService.addStream, handleError);	 	//Atribui o stream de audio recebido ao PeerConnection
-		// }
+		PeerConnectionService.on('messageReceived', messageReceived);       //Mensagem DataChannel Recebida
+		PeerConnectionService.on('dataChannelStateChange', dataChannelStatusChange); // Mudança de estado da conexão DataChannel			
 	}
 
-	vm.upgradeCallRemoveAudio = function() {
-		// PeerConnectionService.removeStream(MediaStreamService.getRequestedAudioStream())
-		// 	.then(MediaStreamService.removeRequestedStream);
-		console.log(MediaStreamService.getRequestedAudioStream());
-		vm.hasAudio = false;
-	}
-
-	vm.upgradeCallRemoveVideo = function() {
-		PeerConnectionService.removeStream(MediaStreamService.getRequestedVideoStream())
-			.then(MediaStreamService.removeRequestedStream)
-	}
-
-	vm.upgradeCallRemoveScreen = function() {
-		PeerConnectionService.removeStream(MediaStreamService.getRequestedScreenStream())
-			.then(MediaStreamService.removeRequestedStream)
-	}		
-
+	//Adiciona chamada de audio à conexão
 	vm.upgradeCallAddAudio = function() {
-		MediaStreamService.getAudioStream()
-			.then(PeerConnectionService.addStream, handleError)
-			.then(PeerConnectionService.createOffer, handleError)
-			.then(SocketService.sendCallData);
+		MediaStreamService.getAudioStream()                       //Pede autorização para compartilhar microfone
+			.then(PeerConnectionService.addStream, handleError)	  //Adiciona o stream de audio ao PeerConnection
+			.then(PeerConnectionService.createOffer, handleError) //Cria uma nova oferta
+			.then(SocketService.sendCallData);					  //Envia nova oferta para renegociação da conexão
 		vm.hasAudio = true;
 	}
 
+	//Adiciona compartilhamento de tela à conexão
 	vm.upgradeCallAddScreen = function() {
 		MediaStreamService.getScreenStream()                         	//Pede autorização e escolha da tela a ser compartilhada
 			.then(PeerConnectionService.addStream, handleError)      	//Atribui o stream de video recebido ao PeerConnection
+			.then(PeerConnectionService.createOffer, handleError)		//Cria uma nova oferta
+			.then(SocketService.sendCallData);							//Envia nova oferta para renegociação da conexão
+		vm.hasScreen = true;
+	}
+
+	//Adiciona video da webcam à conexão
+	vm.upgradeCallAddVideo = function() {
+		MediaStreamService.getVideoStream()
+			.then(PeerConnectionService.addStream, handleError)
 			.then(PeerConnectionService.createOffer, handleError)
 			.then(SocketService.sendCallData);
+		vm.hasVideo = true;
 	}
 	
 	//Função para atribuir uma stream à um elemento video

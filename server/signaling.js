@@ -2,6 +2,12 @@ function signaling(server) {
 	var io = require('socket.io')(server);
     var shortid = require('shortid');	
 	var users = {};	
+	var ControleAtendimento = require('./ControleAtendimentos');
+
+
+	ControleAtendimento.on('lista-espera-changed', function() {
+		io.emit('lista-espera');
+	});
 
 	io.on('connection', function(socket) {
 	    var newId = shortid.generate();
@@ -9,12 +15,13 @@ function signaling(server) {
 		users[newId] = {"socket": socket};	    
 	    socket.emit('entrar' , JSON.stringify({"nomeLogado":newId}));	
 		socket.username = newId;	  
-	    io.emit('lista', JSON.stringify(Object.keys(users)));
+	    //io.emit('lista', JSON.stringify(Object.keys(users)));
         
   		function removeUser(user) {
 		  console.log(user+' saiu.');
+		  ControleAtendimento.removeChamadosBySocket(users[user].socket);
 		  delete users[user];
-		  io.emit('lista', JSON.stringify(Object.keys(users)));
+		  //io.emit('lista', JSON.stringify(Object.keys(users)));
 		}
 		
 	  socket.on('disconnect', function(data) {

@@ -77,7 +77,8 @@ function PeerConnectionService($q, SocketService) {
             service.emit('dataChannelStateChange', sendChannel.readyState)
         }
     }
-
+    
+    //Envia mensagem pelo DataChannel criado
     service.sendMessage = function(data) {
         console.log('mensagem recebida data channel'); //REMOVER
         if (sendChannel) {
@@ -85,6 +86,7 @@ function PeerConnectionService($q, SocketService) {
         }
     }
 
+    //Remove um stream da conexão
     service.removeStream = function(stream) {
         var defered = $q.defer();
         peerConnection.removeStream(stream);
@@ -126,7 +128,7 @@ function PeerConnectionService($q, SocketService) {
                 offerToReceiveVideo: true
         }
         var chamada = JSON.parse(data);
-        if (chamada.dados.msg.type && chamada.dados.msg.type == "offer") {
+        if (chamada.dados.msg.type && chamada.dados.msg.type == "offer") { //Pacote recebido do tipo oferta
             console.log('oferta recebida');
             SocketService.setRemoteCode(chamada.dados.de);
             peerConnection.handleOffer(chamada.dados.msg, function(err) {
@@ -135,27 +137,26 @@ function PeerConnectionService($q, SocketService) {
                     console.log('oferta processada');
                     haveLocalOffer = true;
                     processCandidateBuffer();
-                    peerConnection.answer(function (err, answer) {
+                    peerConnection.answer(function (err, answer) { //Oferta recebida e processada com sucesso, cria resposta
                         if (err) console.log(err)
                         else {
                             console.log('resposta criada e enviada');
-                            service.emit('chamada', answer);                            
+                            service.emit('chamada', answer);          //Resposta criada e enviada                 
                         }
                     })
                 }
             }); 
-        } else if (chamada.dados.msg.type && chamada.dados.msg.type == "answer") {
+        } else if (chamada.dados.msg.type && chamada.dados.msg.type == "answer") { //Pacote recebido do tipo resposta
                 console.log('resposta recebida');
-                peerConnection.handleAnswer(chamada.dados.msg);
-            } else if (chamada.dados.msg.candidate) {
+                peerConnection.handleAnswer(chamada.dados.msg); //Processa resposta
+            } else if (chamada.dados.msg.candidate) { //Pacote recebido do tipo candidato ICE
                 if (haveLocalOffer) {     
-                    peerConnection.processIce(chamada.dados.msg);
+                    peerConnection.processIce(chamada.dados.msg); //Se já existir um SDP de Oferta recebida, processa o candidato
                 } else {
-                    candidateBuffer.push(chamada.dados.msg);
+                    candidateBuffer.push(chamada.dados.msg);  //Se não houver nenhum SDP de Oferta recebida, guarda os candidados para processar posteriormente
                 }
             }        
         }
-    
-    
+                
     return service;
 }

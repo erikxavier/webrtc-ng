@@ -9,10 +9,8 @@ function ListaEsperaController($http, $state, SocketService) {
 	vm.atenderChamado = atenderChamado;
 		
 	activate();
-	
-	
-
-	SocketService.on('lista-espera', function() {
+			
+	SocketService.on('lista-espera', function() { //Notificação de lteração na lista de espera
 		getLista();
 	});
 
@@ -20,30 +18,25 @@ function ListaEsperaController($http, $state, SocketService) {
 		getLista();
 	}
 
-	function getLista() {
+	function getLista() { //Pegar lista de espera
 		$http.get('/api/lista-espera')
 			.then(resolveLista);	
 	}
 	
-	function resolveLista(response) {
-		if (!Array.isArray(response.data)) return [];
-		var data = response.data.map(function(value) {
-			return JSON.parse(value);
-		});
-		vm.lista = data;
-	}
+	function resolveLista(response) {  //Resolve lista de espera e mostra na tela
+		//console.log(response.data);
+		// if (!Array.isArray(response.data)) return [];
+		// var data = response.data.map(function(value) {
+		// 	return JSON.parse(value);
+		// });
+	    vm.lista = response.data;
+	}	
 	
-	function debug(response) {
-		var data = response.data.map(function(value) {
-			return JSON.parse(value);
-		});
-		console.log(data);
-	}
-	
-	function atenderChamado(socketId) {
+	function atenderChamado(chamado) { //Atende o chamado
+		$http.post('/api/atender-chamado', {idTecnico: SocketService.localCode, idChamado: chamado.id})
 		$state.go('chamada-tecnico', {
 			callData: {
-				socketId: socketId,
+				socketId: chamado.socketId,
 				action: 'answer'
 			}
 		});

@@ -8,39 +8,16 @@ MediaStreamService.$inject = ['$window', '$q'];
 
 function MediaStreamService($window, $q) {
     var getScreenId = $window.getScreenId;
-
-    var audioStream;
     var requestedStreams = [];
 
     var service = {
         getScreenStream: getScreenStream,
         getAudioStream: getAudioStream,
-        flushStreams: flushStreams,
-        getEmptyMediaStream: getEmptyMediaStream,
-        getRequestedAudioStream: getRequestedAudioStream,
-        removeRequestedStream: removeRequestedStream
+        getVideoStream: getVideoStream,
+        flushStreams: flushStreams        
     }
 
     return service;
-
-    function getRequestedAudioStream() {
-        return audioStream;
-    }
-
-    function getRequestedVideoStream() {
-       // return getRequestedStream("video");
-    }
-
-    function getRequestedScreenStream() {
-       // return getRequestedStream("screen");
-    }
-
-    function removeRequestedStream(stream) {
-        if (requestedStreams.indexOf(stream)) {
-            requestedStreams.splice(requestedStreams.indexOf(stream));
-            stream.getTracks().forEach(function(track) {track.stop()});
-        }
-    }
 
     //Solicita que o usuário autorize e seleciona a tela para ser compartilhada
 	function getScreenStream() {
@@ -53,7 +30,7 @@ function MediaStreamService($window, $q) {
                     if (error) {
                         defered.reject(error);
                     } else {
-                        console.log(stream);
+                        requestedStreams.push(stream);                        
                         defered.resolve(stream)
                     }
                 });
@@ -63,18 +40,23 @@ function MediaStreamService($window, $q) {
         return defered.promise;
 	}	
 
-    function getEmptyMediaStream() {
-        var constraints = {audio: false, video:false};
+    //Solicita que o usuário autorize o compartilhamento da webcam
+    function getVideoStream() {
+        var constraints = {audio: false, video: true};
         var defered = $q.defer();
+
         getUserMedia(constraints, function(error, stream) {
             if (error) {
                 defered.reject(error);
-            } else {                
+            } else {
+                requestedStreams.push(stream);
                 defered.resolve(stream);
             }
         });
+
         return defered.promise;
     }
+
     //Solicita que o usuário autorize o compartilhamento do audio do microfone
 	function getAudioStream(joinStream) {
 		var constraints = {audio: true, video:false};
@@ -84,7 +66,7 @@ function MediaStreamService($window, $q) {
             if (error) {
                 defered.reject(error);
             } else {
-                audioStream = stream;
+                requestedStreams.push(stream);
                 if (joinStream) {
                     defered.resolve(joinStreams(joinStream, stream));
                 } else {
@@ -102,6 +84,7 @@ function MediaStreamService($window, $q) {
         return stream1.addTrack(stream2.getTracks()[0]);
     }    
 
+    //Libera todas as streams requisitadas da memória
     function flushStreams() {
         while(requestedStreams.length) {
             requestedStreams

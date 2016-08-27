@@ -10,11 +10,11 @@
 	<h4>Aguardando um técnico.</h4>
 </div>
 <div class="text-center" ng-if="vm.pcIsConnected">
-	<a ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Iniciar chamada por audio</a>
+	<button ng-disabled="!vm.pcIsConnected || vm.hasAudio" ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Iniciar chamada por audio</button>
 	<!--<a ng-if="vm.hasAudio" ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveAudio()" class="btn btn-primary">Parar microfone</a>-->
-	<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Ativar Camera</a>
+	<button ng-disabled="!vm.pcIsConnected || vm.hasVideo" ng-click="vm.upgradeCallAddVideo()" class="btn btn-primary">Ativar Camera</button>
 	<!--<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Parar Camera</a>-->
-	<a ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallAddScreen()" class="btn btn-primary">Enviar Tela</a>
+	<button ng-disabled="!vm.pcIsConnected || vm.hasScreen" ng-click="vm.upgradeCallAddScreen()" class="btn btn-primary">Enviar Tela</button>
 	<!--<a ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveScreen()" class="btn btn-primary">Parar Tela</a>-->
 	
 	<div class="list-group" style="margin-top:20px;">
