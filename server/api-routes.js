@@ -1,5 +1,4 @@
 var router = require('express').Router();
-var db = require('./db.config').getDb();
 var socket;
 // var redis = require('redis');
 // var client = redis.createClient(); 
