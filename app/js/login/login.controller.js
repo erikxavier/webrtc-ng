@@ -22,7 +22,7 @@ function LoginController($scope, $state, $http, SocketService) {
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('tipo', 'tecnico');
                 $scope.$parent.vm.tipo = 'tecnico';
-                $state.go('home'); 
+                $state.go('lista-espera'); 
             } else {
                 vm.loginMsg = 'Usuario ou senha incorretos';
             }

@@ -9,14 +9,14 @@ function HomeController($scope, $state) {
     
     
     function activate() {
-        if (sessionStorage.getItem('tipo') == 'tecnico') {
-            $scope.$parent.vm.tipo = 'tecnico';
-            $state.go('historico');
-        } else if (sessionStorage.getItem('tipo') == 'usuario') {
-            $scope.$parent.vm.tipo = 'usuario';
-            $state.go('solicitar-suporte')
-        } else {          
-            $state.go('login');
-        }        
+        // if (sessionStorage.getItem('tipo') == 'tecnico') {
+        //     $scope.$parent.vm.tipo = 'tecnico';
+        //     $state.go('historico');
+        // } else if (sessionStorage.getItem('tipo') == 'usuario') {
+        //     $scope.$parent.vm.tipo = 'usuario';
+        //     $state.go('solicitar-suporte')
+        // } else {          
+        //     $state.go('login');
+        // }        
     }
 }

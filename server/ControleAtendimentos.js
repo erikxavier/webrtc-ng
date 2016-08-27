@@ -10,7 +10,7 @@ var tecnicos = [];
 control.addChamado = function(chamado) {
     if (chamado.socketId) {
         chamado.id = shortid.generate();
-        chamado.data = new Date();
+        chamado.date = new Date();
         chamado.atendido = false;
         listaChamados.push(chamado);
         control.emit('lista-espera-changed');

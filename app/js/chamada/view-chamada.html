@@ -4,9 +4,10 @@
 </video>
 <audio id='audio1' controls autoplay>  
 </audio>-->
-
+<link rel="stylesheet" href="/css/loader.css">
 <legend class='text-center'><h1>Chamando CTI</h1></legend>
 <div class="text-center" ng-if="!vm.pcIsConnected">
+	<div class="loader"></div>
 	<h4>Aguardando um técnico.</h4>
 </div>
 <div class="text-center" ng-if="vm.pcIsConnected">

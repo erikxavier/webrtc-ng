@@ -20,6 +20,7 @@ function SocketService() {
     
      socket.on('disconnect', function() {
         service.isConnected = false;
+        service.emit('disconnect');
     });
     
     //Avisa qual é o seu socketId

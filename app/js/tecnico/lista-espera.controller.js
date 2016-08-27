@@ -31,6 +31,13 @@ function ListaEsperaController($http, $state, SocketService) {
 		// });
 	    vm.lista = response.data;
 	}	
+
+	vm.formatDate = function(date) {
+		date = new Date(date);
+		var dateString = date.toLocaleDateString();
+		dateString += ' às ' + date.toLocaleTimeString()
+		return dateString;
+	}
 	
 	function atenderChamado(chamado) { //Atende o chamado
 		$http.post('/api/atender-chamado', {idTecnico: SocketService.localCode, idChamado: chamado.id})

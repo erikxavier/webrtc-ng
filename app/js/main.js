@@ -17,12 +17,18 @@ angular.module('WebRTC-NG', [require('angular-ui-router')])
        $urlRouterProvider.otherwise("/");
        
        $stateProvider
-        .state('home', {
-            url: "/",
-            templateUrl: 'js/home/view-home.html',
-            controller: require('./home/home.controller'),
-            controllerAs: 'vm'
-        })
+        // .state('home', {
+        //     url: "/",
+        //     templateUrl: 'js/home/view-home.html',
+        //     controller: require('./home/home.controller'),
+        //     controllerAs: 'vm'
+        // })
+         .state('login', {
+             url:'/',
+             templateUrl: 'js/login/view-login.html',
+             controller: require('./login/login.controller'),
+             controllerAs: 'vm'
+         })        
          .state('solicitar-suporte', {
              url: '/solicitar-suporte',
              templateUrl: 'js/suporte/view-solicitar-suporte.html',
@@ -56,12 +62,6 @@ angular.module('WebRTC-NG', [require('angular-ui-router')])
              params: {callData: null},
              templateUrl: 'js/tecnico/view-chamada-tecnico.html',
              controller: require('./tecnico/chamada-tecnico.controller'),
-             controllerAs: 'vm'
-         })         
-         .state('login', {
-             url:'/login',
-             templateUrl: 'js/login/view-login.html',
-             controller: require('./login/login.controller'),
              controllerAs: 'vm'
          });
     }

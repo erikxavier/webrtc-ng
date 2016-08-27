@@ -1,9 +1,9 @@
 module.exports = ChamadaTecnicoController;
 
 ChamadaTecnicoController.$inject = 
-  ['$scope', '$stateParams', 'SocketService', 'PeerConnectionService', 'MediaStreamService'];
+  ['$scope', '$stateParams', '$state', 'SocketService', 'PeerConnectionService', 'MediaStreamService'];
 
-function ChamadaTecnicoController($scope, $stateParams, SocketService, PeerConnectionService, MediaStreamService) {
+function ChamadaTecnicoController($scope, $stateParams, $state, SocketService, PeerConnectionService, MediaStreamService) {
 	var vm = this;
 
 	vm.pcIsConnected = false;
@@ -24,6 +24,9 @@ function ChamadaTecnicoController($scope, $stateParams, SocketService, PeerConne
 	}    
 
 	function activate() {
+		if (!$stateParams.callData) {
+			return $state.go('login');
+		}
 		//Inicialização					
 		PeerConnectionService.openConnection();	 							//Instancia um novo PeerConnection
 		PeerConnectionService.createDataChannel();

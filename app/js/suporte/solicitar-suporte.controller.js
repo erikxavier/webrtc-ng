@@ -15,7 +15,7 @@ function SolicitarSuporteController($http, $state, SocketService) {
             var solicitacao = {
                 socketId: socketId,
                 nome: vm.usuario,
-                senha: vm.senha,
+                email: vm.email,
                 descricao: vm.descricao,
             }
             $http.post('/api/solicitar-suporte', solicitacao)

@@ -48,21 +48,21 @@ router.get('/lista-espera', function(req, res, next) {
     // }    
 })
 
-// router.post('/login-tecnico', function (req, res, next) {
-//     var usuario = req.body;
-//     var response = {};
-    
-//     if (validaUsuario(usuario)) {
-//         response.autenticado = true;
-//         response.token = 'token';
-//         //client.sadd('disponiveis', usuario.nome);
-//         tecnicosDisponiveis.push(usuario.nome);
+    router.post('/login-tecnico', function (req, res, next) {
+        var usuario = req.body;
+        var response = {};
         
-//     } else {
-//         response.autenticado = false;
-//     }    
-//     res.send(response);
-// })
+        if (validaUsuario(usuario)) {
+            response.autenticado = true;
+            response.token = 'meuTokenSecreto';
+            //client.sadd('disponiveis', usuario.nome);
+            //tecnicosDisponiveis.push(usuario.nome);
+            
+        } else {
+            response.autenticado = false;
+        }    
+        res.send(response);
+    })
 
 function getRouter(io) {
     socket = io;
@@ -72,5 +72,5 @@ module.exports = getRouter;
 
 
 function validaUsuario(usuario) {
-    return (usuario.nome == 'tecnico' && usuario.senha == '12345');
+    return (usuario.nome == 'tecnico');
 }

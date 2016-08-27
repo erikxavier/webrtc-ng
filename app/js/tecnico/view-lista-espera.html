@@ -9,13 +9,13 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">
 						Solicitante: {{item.nome}}
-						<span class="pull-right">Hora da solicitação: 14:00</span>
+						<span class="pull-right">Solicitação feita em {{vm.formatDate(item.date)}}</span>
 					</h3>
 				</div>
 				<div class="panel-body">
 					{{item.descricao}}
 					<span class="col-md-2 pull-right">
-						<button class="btn btn-block btn-primary" ng-click="vm.atenderChamado(item)">Atender Chamado</button>
+						<button class="btn btn-block btn-primary" ng-click="vm.atenderChamado(item)">Atender</button>
 					</span>
 				</div>
 			</div>

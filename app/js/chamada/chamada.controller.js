@@ -1,9 +1,9 @@
 module.exports = ChamadaController;
 
 ChamadaController.$inject = 
-  ['$scope', '$stateParams', 'SocketService', 'PeerConnectionService', 'MediaStreamService'];
+  ['$scope', '$stateParams', '$state', 'SocketService', 'PeerConnectionService', 'MediaStreamService'];
 
-function ChamadaController($scope, $stateParams, SocketService, PeerConnectionService, MediaStreamService) {
+function ChamadaController($scope, $stateParams, $state, SocketService, PeerConnectionService, MediaStreamService) {
 	var vm = this;
 
 	vm.emAtendimento = false;
@@ -14,17 +14,11 @@ function ChamadaController($scope, $stateParams, SocketService, PeerConnectionSe
 		
 	activate();
 	
-	/////implementação
-	
-	vm.sendMessage = function() {
-		vm.chatMessages.push({
-			received: false,
-			message: vm.textToSend
-		});
-		PeerConnectionService.sendMessage(vm.textToSend)
-		vm.textToSend = "";
-	}
+
 	function activate() {
+		if (!$stateParams.callData) {
+			return $state.go('login');
+		}
 		//Inicialização					
 		PeerConnectionService.openConnection();	 							//Instancia um novo PeerConnection
 		PeerConnectionService.createDataChannel();							//Cria DataChannel no PeerConnection
@@ -34,8 +28,30 @@ function ChamadaController($scope, $stateParams, SocketService, PeerConnectionSe
 		PeerConnectionService.on('videoStreamAdded', setVideoSrc); 			//Coloca um stream remoto recebido no elemento video
 		PeerConnectionService.on('audioStreamAdded', setAudioSrc); 			//Coloca um stream de audio remoto recebido em um objeto audio
 		SocketService.on('chamada', PeerConnectionService.handleCallData); 	//Resolve os pacotes SDP e ICE recebidos pelo socket
+		SocketService.on('disconnect', onSocketDisconnect);					//Resolve evento de socket desconectado do servidor				
 		PeerConnectionService.on('messageReceived', messageReceived);       //Mensagem DataChannel Recebida
 		PeerConnectionService.on('dataChannelStateChange', dataChannelStatusChange); // Mudança de estado da conexão DataChannel			
+	}
+
+	/////implementação
+	
+	//Verifica perda de conexão com o servidor socket
+	function onSocketDisconnect() {
+		console.log('pc conncted socket disconnect', vm.pcIsConnected);
+		if (!vm.pcIsConnected) {
+			alert('A conexão com o servidor foi perdida, tente novamente mais tarde!')
+			$state.go('login');
+		}
+	}
+
+	//Envia mensagem pelo canal DataChannel
+	vm.sendMessage = function() {
+		vm.chatMessages.push({
+			received: false,
+			message: vm.textToSend
+		});
+		PeerConnectionService.sendMessage(vm.textToSend)
+		vm.textToSend = "";
 	}
 
 	//Adiciona chamada de audio à conexão
