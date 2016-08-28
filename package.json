@@ -5,9 +5,28 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "nodemon server ",
+    "start": "webpack && node server ",
+    "dev": "nodemon server",
     "build": "webpack -d --watch"
   },
+  "dependencies": {
+    "angular": "^1.5.5",
+    "angular-ui-router": "^0.2.18",
+    "bootstrap": "^3.3.6",
+    "getscreenmedia": "^1.5.3",
+    "getusermedia": "^1.3.7",
+    "jquery": "^2.2.3",
+    "rtcpeerconnection": "^5.0.1",
+    "socket.io-client": "^1.4.5",
+    "body-parser": "^1.15.1",
+    "compression": "^1.6.2",
+    "express": "^4.12.4",
+    "lodash": "^4.15.0",
+    "lowdb": "^0.13.1",
+    "redis": "^2.6.0-2",
+    "shortid": "^2.2.4",
+    "socket.io": "^1.3.5"    
+  },  
   "devDependencies": {
     "browserify": "^13.0.1",
     "event-stream": "^3.3.2",
