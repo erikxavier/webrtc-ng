@@ -5,7 +5,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "webpack && node server ",
+    "start": "node ./node_modules/webpack/bin/webpack && node server ",
     "dev": "nodemon server",
     "build": "webpack -d --watch"
   },
