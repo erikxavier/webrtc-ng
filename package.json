@@ -5,9 +5,10 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "node ./node_modules/webpack/bin/webpack && node server ",
+    "start": "node server ",
     "dev": "nodemon server",
-    "build": "webpack -d --watch"
+    "build": "webpack -d --watch",
+    "postinstall": "node ./node_modules/webpack/bin/webpack"
   },
   "dependencies": {
     "angular": "^1.5.5",
