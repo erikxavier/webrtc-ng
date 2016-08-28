@@ -14,10 +14,12 @@ function PeerConnectionService($q, SocketService) {
     var peerConnection;
     var sendChannel;
     var haveLocalOffer = false;
+    var haveLocalAnswer = false;
     var candidateBuffer = [];
 
     //Fecha a conexão se houver alguma, instancia um novo PeerConnection e atribui os emissores do serviço aos listeners do PeerConnection
     service.openConnection = function() {
+        var defered = $q.defer();
         if (peerConnection) {
             peerConnection.close();
         }
@@ -58,7 +60,10 @@ function PeerConnectionService($q, SocketService) {
 
         peerConnection.on('endOfCandidates', function() {
             service.emit('endOfCandidates');
+            defered.resolve();
         });        
+
+        return defered.promise;
     }
 
     //Adiciona um MediaStream ao PeerConnection
@@ -107,6 +112,7 @@ function PeerConnectionService($q, SocketService) {
             if (error) {
                 defered.reject(error);
             } else {
+                console.log('fim dos candidatos, enviar oferta');
                 defered.resolve(offer);
             }
         });
@@ -141,7 +147,7 @@ function PeerConnectionService($q, SocketService) {
                         if (err) console.log(err)
                         else {
                             console.log('resposta criada e enviada');
-                            service.emit('chamada', answer);          //Resposta criada e enviada                 
+                            service.emit('chamada', answer);          //Resposta criada e enviada           
                         }
                     })
                 }
@@ -149,8 +155,10 @@ function PeerConnectionService($q, SocketService) {
         } else if (chamada.dados.msg.type && chamada.dados.msg.type == "answer") { //Pacote recebido do tipo resposta
                 console.log('resposta recebida');
                 peerConnection.handleAnswer(chamada.dados.msg); //Processa resposta
+                haveLocalAnswer = true;
+                processCandidateBuffer();
             } else if (chamada.dados.msg.candidate) { //Pacote recebido do tipo candidato ICE
-                if (haveLocalOffer) {     
+                if (haveLocalOffer || haveLocalAnswer) {     
                     peerConnection.processIce(chamada.dados.msg); //Se já existir um SDP de Oferta recebida, processa o candidato
                 } else {
                     candidateBuffer.push(chamada.dados.msg);  //Se não houver nenhum SDP de Oferta recebida, guarda os candidados para processar posteriormente
