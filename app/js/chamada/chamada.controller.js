@@ -43,6 +43,13 @@ function ChamadaController($scope, $stateParams, $state, SocketService, PeerConn
 			$state.go('login');
 		}
 	}
+	
+	vm.chatEnter = function(e) {
+		console.log('asdasds',e);
+		if (e.keyCode === 13) {
+			vm.sendMessage()
+		}
+	}	
 
 	//Envia mensagem pelo canal DataChannel
 	vm.sendMessage = function() {

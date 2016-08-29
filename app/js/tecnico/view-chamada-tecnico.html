@@ -1,7 +1,8 @@
+<div class="text-center">
 <h2>Chamada em andamento com {{vm.socketId}}</h2>
 <h6 class="text-danger">{{vm.errorMessage}}</h6>
-<a ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Iniciar chamada por audio</a>
-<video id='video1' width="" height="" controls autoplay>  
+<div class="row"><a ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Iniciar chamada por audio</a></div>
+<div class="row" ng-if="vm.hasVideo"><video id='video1' width="848" height="480" controls autoplay></div>  
 </video>
 
 	<div class="list-group" style="margin-top:20px;">
@@ -17,7 +18,7 @@
 	<form class="form-horizontal" style="margin-top:20px;">
 	<div class="form-group">
 		<div class="col-lg-10">
-		<textarea ng-model="vm.textToSend" class="form-control" rows="3" id="textArea"></textarea>
+		<textarea ng-model="vm.textToSend" ng-keypress="vm.chatEnter($event)" class="form-control" rows="3" id="textArea"></textarea>
 		<span class="help-block">Digite sua mensagem.</span>
 		</div>
 	</div>	
@@ -28,3 +29,4 @@
 		</div>
 	</div>
 	</form>
+</div>	

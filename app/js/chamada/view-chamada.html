@@ -11,9 +11,9 @@
 	<h4>Aguardando um técnico.</h4>
 </div>
 <div class="text-center" ng-if="vm.pcIsConnected">
-	<button ng-disabled="!vm.pcIsConnected || vm.hasAudio" ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Iniciar chamada por audio</button>
+	<button ng-disabled="!vm.pcIsConnected || vm.hasAudio" ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Enviar Audio</button>
 	<!--<a ng-if="vm.hasAudio" ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveAudio()" class="btn btn-primary">Parar microfone</a>-->
-	<button ng-disabled="!vm.pcIsConnected || vm.hasVideo" ng-click="vm.upgradeCallAddVideo()" class="btn btn-primary">Ativar Camera</button>
+	<button ng-disabled="!vm.pcIsConnected || vm.hasVideo" ng-click="vm.upgradeCallAddVideo()" class="btn btn-primary">Envier Camera</button>
 	<!--<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Parar Camera</a>-->
 	<button ng-disabled="!vm.pcIsConnected || vm.hasScreen" ng-click="vm.upgradeCallAddScreen()" class="btn btn-primary">Enviar Tela</button>
 	<!--<a ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveScreen()" class="btn btn-primary">Parar Tela</a>-->
@@ -31,7 +31,7 @@
 	<form class="form-horizontal" style="margin-top:20px;">
 	<div class="form-group">
 		<div class="col-lg-10">
-		<textarea ng-model="vm.textToSend" class="form-control" rows="3" id="textArea"></textarea>
+		<textarea ng-model="vm.textToSend" ng-keypress="vm.chatEnter($event)" class="form-control" rows="3" id="textArea"></textarea>
 		<span class="help-block">Mande sua mensagem.</span>
 		</div>
 	</div>

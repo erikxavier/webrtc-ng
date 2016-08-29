@@ -9,12 +9,14 @@ function ChamadaTecnicoController($scope, $stateParams, $state, SocketService, P
 	vm.pcIsConnected = false;
     vm.chatMessages = [];
     vm.chatOpen;
+	vm.hasVideo = false;
 		
 	activate();
 	
 	/////implementação
 	
 	vm.sendMessage = function() {
+		if (!vm.textToSend) return;
 		vm.chatMessages.push({
 			received: false,
 			message: vm.textToSend
@@ -45,8 +47,16 @@ function ChamadaTecnicoController($scope, $stateParams, $state, SocketService, P
 	
 	//Função para atribuir uma stream à um elemento video
 	function setVideoSrc(stream) {
+		vm.hasVideo = true;
 		console.log('setVideoSrc',stream);
 		document.getElementById('video1').src = stream;
+	}
+	
+	vm.chatEnter = function(e) {
+		console.log('asdasds',e);
+		if (e.keyCode === 13) {
+			vm.sendMessage()
+		}
 	}
 
 	function dataChannelStatusChange(status) {
