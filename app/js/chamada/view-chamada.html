@@ -5,13 +5,13 @@
 <audio id='audio1' controls autoplay>  
 </audio>-->
 <link rel="stylesheet" href="/css/loader.css">
-<div class="text-center" ng-if="!vm.pcIsConnected">
+<div class="text-center" ng-show="!vm.pcIsConnected">
 	<legend class='text-center'><h1>Chamando CTI</h1></legend>
 	<div class="loader"></div>
 	<h4>Aguardando um técnico.</h4>
 </div>
 
-<div class="text-center" ng-if="vm.pcIsConnected">
+<div class="text-center" ng-show="vm.pcIsConnected">
 	<legend class='text-center'><h1>Chamada com técnico</h1></legend>
 	<button ng-disabled="!vm.pcIsConnected || vm.hasAudio" ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Enviar Audio</button>
 	<!--<a ng-if="vm.hasAudio" ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveAudio()" class="btn btn-primary">Parar microfone</a>-->

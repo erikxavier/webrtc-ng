@@ -1,12 +1,12 @@
 <div class="text-center">
 
 	<link rel="stylesheet" href="/css/loader.css">
-	<div class="text-center" ng-if="!vm.pcIsConnected">
+	<div class="text-center" ng-show="!vm.pcIsConnected">
 		<legend class='text-center'><h1>Conectando com o usuário ...</h1></legend>
 		<div class="loader"></div>
 	</div>
 		
-	<div class="text-center" ng-if="vm.pcIsConnected">
+	<div class="text-center" ng-show="vm.pcIsConnected">
 				
 		<legend class='text-center'><h1>Chamada com {{vm.chamadoAtendido.nome}}</h1></legend>
 		<h6 class="text-danger">{{vm.errorMessage}}</h6>
