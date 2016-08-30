@@ -21,7 +21,7 @@ app.use(express.static(
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-var server = http.createServer(app);
+//var server = http.createServer(app);
 var httpsServer = https.createServer(certificados, app);
 
 var signaling = require('./signaling.js')(httpsServer);
@@ -29,11 +29,17 @@ app.use('/api', require('./api-routes')(signaling));
 
 
 
-var port = process.env.PORT || 81;
+var port = process.env.PORT || 80;
 var httpsPort = process.env.HTTPS_PORT || 443;
-server.listen(port, function () {
-    console.log("Servidor web rodando na porta "+port);
-});
+
+//Rota para https automática
+http.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+}).listen(port);
+// server.listen(port, function () {
+//     console.log("Servidor web rodando na porta "+port);
+// });
 
 httpsServer.listen(httpsPort, function() {
     console.log("Servidor HTTPS rodando na porta "+httpsPort);
