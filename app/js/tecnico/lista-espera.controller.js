@@ -43,7 +43,7 @@ function ListaEsperaController($http, $state, SocketService) {
 		$http.post('/api/atender-chamado', {idTecnico: SocketService.localCode, idChamado: chamado.id})
 		$state.go('chamada-tecnico', {
 			callData: {
-				socketId: chamado.socketId,
+				chamado: chamado,
 				action: 'answer'
 			}
 		});

@@ -19,7 +19,7 @@ function signaling(server) {
         
   		function removeUser(user) {
 		  console.log(user+' saiu.');
-		  ControleAtendimento.removeChamadosBySocket(users[user].socket);
+		  ControleAtendimento.removeChamadosBySocket(user);
 		  delete users[user];
 		  //io.emit('lista', JSON.stringify(Object.keys(users)));
 		}

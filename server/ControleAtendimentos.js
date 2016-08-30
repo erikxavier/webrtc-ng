@@ -20,8 +20,14 @@ control.addChamado = function(chamado) {
 }
 
 control.removeChamadosBySocket = function(socketId) {
-    listaChamados = _.remove(listaChamados, function(chamado) {
-        return chamado.socketId == socketId;
+    // listaChamados = _.remove(listaChamados, function(chamado) {
+    //     return chamado.socketId === socketId;
+    // });
+    
+    listaChamados = listaChamados.filter(function(chamado) {
+console.log('chamado.socketId:',chamado.socketId);
+    console.log('socketId: ',socketId);        
+       return chamado.socketId !== socketId; 
     });
     control.emit('lista-espera-changed');
 }

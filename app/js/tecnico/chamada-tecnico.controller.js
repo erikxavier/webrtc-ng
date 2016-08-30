@@ -29,6 +29,7 @@ function ChamadaTecnicoController($scope, $stateParams, $state, SocketService, P
 		if (!$stateParams.callData) {
 			return $state.go('login');
 		}
+		vm.chamadoAtendido = $stateParams.callData.chamado;
 		//Inicialização					
 		PeerConnectionService.openConnection();	 							//Instancia um novo PeerConnection
 		PeerConnectionService.createDataChannel();
@@ -40,7 +41,7 @@ function ChamadaTecnicoController($scope, $stateParams, $state, SocketService, P
 		PeerConnectionService.on('audioStreamAdded', setAudioSrc); 			//Coloca um stream de audio remoto recebido em um objeto audio
 		SocketService.on('chamada', PeerConnectionService.handleCallData); 	//Resolve os pacotes SDP e ICE recebidos pelo socket
 		PeerConnectionService.on('messageReceived', messageReceived)
-		SocketService.setRemoteCode($stateParams.callData.socketId);
+		SocketService.setRemoteCode(vm.chamadoAtendido.socketId);
 		PeerConnectionService.createOffer()
 			.then(SocketService.sendCallData); 
 	}
@@ -53,7 +54,6 @@ function ChamadaTecnicoController($scope, $stateParams, $state, SocketService, P
 	}
 	
 	vm.chatEnter = function(e) {
-		console.log('asdasds',e);
 		if (e.keyCode === 13) {
 			vm.sendMessage()
 		}

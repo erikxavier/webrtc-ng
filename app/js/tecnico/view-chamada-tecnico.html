@@ -1,32 +1,39 @@
 <div class="text-center">
-<h2>Chamada em andamento com {{vm.socketId}}</h2>
-<h6 class="text-danger">{{vm.errorMessage}}</h6>
-<div class="row"><a ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Iniciar chamada por audio</a></div>
-<div class="row" ng-if="vm.hasVideo"><video id='video1' width="848" height="480" controls autoplay></div>  
-</video>
 
-	<div class="list-group" style="margin-top:20px;">
-		<a ng-repeat="msg in vm.chatMessages" class="list-group-item">
-		<p class="list-group-item-text text-left">
-			<span ng-if="msg.received" class="label label-info">Usuário:</span> 
-			<span ng-if="!msg.received" class="label label-warning">Você:</span>
-			{{msg.message}}
-		</p>
-		</a>		
+	<link rel="stylesheet" href="/css/loader.css">
+	<div class="text-center" ng-if="!vm.pcIsConnected">
+		<legend class='text-center'><h1>Conectando com o usuário ...</h1></legend>
+		<div class="loader"></div>
 	</div>
-    
-	<form class="form-horizontal" style="margin-top:20px;">
-	<div class="form-group">
-		<div class="col-lg-10">
-		<textarea ng-model="vm.textToSend" ng-keypress="vm.chatEnter($event)" class="form-control" rows="3" id="textArea"></textarea>
-		<span class="help-block">Digite sua mensagem.</span>
+		
+	<div class="text-center" ng-if="vm.pcIsConnected">
+				
+		<legend class='text-center'><h1>Chamada com {{vm.chamadoAtendido.nome}}</h1></legend>
+		<h6 class="text-danger">{{vm.errorMessage}}</h6>
+		<div class="row"><a ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Iniciar chamada por audio</a></div>
+		<div class="row" ng-if="vm.hasVideo"><video id='video1' width="320" height="180" controls autoplay></div>  
+		</video>
+	
+		<div class="list-group" style="margin-top:20px;">
+			<a ng-repeat="msg in vm.chatMessages" class="list-group-item">
+			<p class="list-group-item-text text-left">
+				<span ng-if="msg.received" class="label label-info">Usuário:</span> 
+				<span ng-if="!msg.received" class="label label-warning">Você:</span>
+				{{msg.message}}
+			</p>
+			</a>		
 		</div>
-	</div>	
-
-	<div class="form-group text-center">
-		<div class="col-lg-10 col-lg-offset-2">
-			<a ng-disabled="!vm.chatOpen" ng-click="vm.sendMessage()" class="btn btn-primary">Enviar</a>
-		</div>
+		<!-- Chat box  -->
+		<form class="form-horizontal" style="margin-top:20px;">
+			<div class="form-group">
+				<h3 class="box">Chat <small>| converse por texto</small></h3>
+				<textarea ng-model="vm.textToSend" ng-keypress="vm.chatEnter($event)" class="form-control" rows="2" id="textArea"></textarea>
+				<span class="help-block">Mande sua mensagem.</span>
+			</div>
+			<div class="form-group text-center">
+				<a ng-disabled="!vm.chatOpen" ng-click="vm.sendMessage()" class="btn btn-primary">Enviar</a>
+			</div>
+		</form>
+		<!-- Fim Chat box  -->
 	</div>
-	</form>
 </div>	

@@ -5,15 +5,17 @@
 <audio id='audio1' controls autoplay>  
 </audio>-->
 <link rel="stylesheet" href="/css/loader.css">
-<legend class='text-center'><h1>Chamando CTI</h1></legend>
 <div class="text-center" ng-if="!vm.pcIsConnected">
+	<legend class='text-center'><h1>Chamando CTI</h1></legend>
 	<div class="loader"></div>
 	<h4>Aguardando um técnico.</h4>
 </div>
+
 <div class="text-center" ng-if="vm.pcIsConnected">
+	<legend class='text-center'><h1>Chamada com técnico</h1></legend>
 	<button ng-disabled="!vm.pcIsConnected || vm.hasAudio" ng-click="vm.upgradeCallAddAudio()" class="btn btn-primary">Enviar Audio</button>
 	<!--<a ng-if="vm.hasAudio" ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveAudio()" class="btn btn-primary">Parar microfone</a>-->
-	<button ng-disabled="!vm.pcIsConnected || vm.hasVideo" ng-click="vm.upgradeCallAddVideo()" class="btn btn-primary">Envier Camera</button>
+	<button ng-disabled="!vm.pcIsConnected || vm.hasVideo" ng-click="vm.upgradeCallAddVideo()" class="btn btn-primary">Enviar Camera</button>
 	<!--<a ng-disabled="!vm.pcIsConnected" class="btn btn-primary">Parar Camera</a>-->
 	<button ng-disabled="!vm.pcIsConnected || vm.hasScreen" ng-click="vm.upgradeCallAddScreen()" class="btn btn-primary">Enviar Tela</button>
 	<!--<a ng-disabled="!vm.pcIsConnected" ng-click="vm.upgradeCallRemoveScreen()" class="btn btn-primary">Parar Tela</a>-->
@@ -27,19 +29,17 @@
 		</p>
 		</a>		
 	</div>
-	
+	<!-- Chat box  -->
 	<form class="form-horizontal" style="margin-top:20px;">
-	<div class="form-group">
-		<div class="col-lg-10">
-		<textarea ng-model="vm.textToSend" ng-keypress="vm.chatEnter($event)" class="form-control" rows="3" id="textArea"></textarea>
-		<span class="help-block">Mande sua mensagem.</span>
+		<div class="form-group">
+			<h3 class="box">Chat <small>| converse por texto</small></h3>
+			<textarea ng-model="vm.textToSend" ng-keypress="vm.chatEnter($event)" class="form-control" rows="2" id="textArea"></textarea>
+			<span class="help-block">Mande sua mensagem.</span>
 		</div>
-	</div>
-	
-	<div class="form-group text-center">
-		<div class="col-lg-10 col-lg-offset-2">
+		<div class="form-group text-center">
 			<a ng-disabled="!vm.chatOpen" ng-click="vm.sendMessage()" class="btn btn-primary">Enviar</a>
 		</div>
-	</div>
 	</form>
+	<!-- Fim Chat box  -->
+	
 </div>

@@ -45,13 +45,7 @@
                         <a ui-sref="solicitar-suporte">Solicitar assistência</a>
                     </li>
                     <li ng-if="vm.tipo == 'tecnico'">
-                        <a ui-sref="historico">Histórico de chamados</a>
-                    </li>
-                    <li ng-if="vm.tipo == 'tecnico'">
                         <a ui-sref="lista-espera">Lista de solicitações</a>
-                    </li>
-                    <li>
-                        <a href="#">Ajuda</a>
                     </li>
                 </ul>
             </div>
@@ -62,43 +56,7 @@
 
     <!-- Page Content -->
     <div class="container main-container">
-        <!--<div class="row">-->
-            <!-- Begin - Duvidas Frequentes -->
-            <!--<div class="col-md-6">
-                <legend class='text-center'><h1>Dúvidas Frequentes</h1></legend>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Como usar o Datashow</h3>
-                    </div>
-                    <div class="panel-body">
-                        <ol>
-                            <li>Verifique se o estabilizador está ligado, ele também alimenta a energia do DataShow.</li>
-                            <li>Utilize o controle remoto para ligar o equipamento.</li>
-                            <li>Pressione o botão do Windows juntamente com a letra "P".</li>
-                            <li>Selecione um dos modos de operação.</li>
-                        </ol>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Como usar iTalc</h3>
-                    </div>
-                    <div class="panel-body">
-                        <ol>
-                            <li>Clique no ícone do iTalc em sua área de trabalho.</li>
-                            <li>Caso ele solicite a senha, entre com seu usuário e senha do Câmpus.</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>-->
-            <!-- End - Duvidas Frequentes -->
-            
-            <!--<div class="col-md-6">-->
-                <div ui-view></div>
-            <!--</div>
-            
-        </div>-->
-
+        <div ui-view></div>
     </div>
     <!-- /.container -->
 </body>
